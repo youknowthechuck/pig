@@ -36,9 +36,9 @@ public static class CubicInterpUtils
         float t2 = t * t;
 
         Vector3 c0 = (p1 - p0) * (1 + bias) * (1 - tension) / 2;
-        c0 += (p2 - p1) * (1 - bias) * (1 - tension) / 2;
+                c0 += (p2 - p1) * (1 - bias) * (1 - tension) / 2;
         Vector3 c1 = (p2 - p1) * (1 + bias) * (1 - tension) / 2;
-        c1 += (p3 - p2) * (1 - bias) * (1 - tension) / 2;
+                c1 += (p3 - p2) * (1 - bias) * (1 - tension) / 2;
 
         //first derivatives of coefficients above
         float dti0 = 6 * t2 - 6 * t;

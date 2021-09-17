@@ -39,9 +39,7 @@ public class PathViewer : Editor
 
             Handles.DrawWireCube(second.m_transform.position, boxSize);
 
-            ENodeInterpolation drawMode = first.m_interpFlags;
-
-            if (drawMode.HasFlag(ENodeInterpolation.interp_cubic))
+            if (first.m_interpFlags == ENodeInterpolation.interp_cubic)
             {
                 const float dT = 1.0f / 20.0f;
 
@@ -57,7 +55,7 @@ public class PathViewer : Editor
                     t += dT;
                 }
             }
-            else if (drawMode.HasFlag(ENodeInterpolation.interp_linear))
+            else if (first.m_interpFlags == ENodeInterpolation.interp_linear)
             {
                 Handles.DrawLine(first.m_transform.position, second.m_transform.position, 4);
             }

@@ -4,5 +4,7 @@ using UnityEngine;
 [GenerateAuthoringComponent]
 public struct PathData : IComponentData
 {
-    PathNode[] m_nodes;
+    public PathNode[] m_nodes;
+    public float m_length;
+    public uint m_id;
 }

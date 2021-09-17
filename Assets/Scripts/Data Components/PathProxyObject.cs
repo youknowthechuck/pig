@@ -1,15 +1,14 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
 public class PathProxyObject : MonoBehaviour
 {
-    public List<PathNode> m_nodes;
+    public System.Collections.Generic.List<PathNode> m_nodes;
+    public uint m_id = 0;
+    float m_length = 0.0f;
+    
 
-    float length = 0.0f;
-    float approxLength = 0.0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -43,8 +42,7 @@ public class PathProxyObject : MonoBehaviour
 
     void CalulateTotalLength()
     {
-        length = 0.0f;
-        approxLength = 0.0f;
+        m_length = 0.0f;
         for (int i = 0, j = 1; j < m_nodes.Count; ++i, ++j)
         {
             int prevIndex = Math.Max(i - 1, 0);
@@ -55,7 +53,7 @@ public class PathProxyObject : MonoBehaviour
             PathNode prev = m_nodes[prevIndex];
             PathNode next = m_nodes[nextIndex];
 
-            if (first.m_interpFlags.HasFlag(ENodeInterpolation.interp_cubic))
+            if (first.m_interpFlags == ENodeInterpolation.interp_cubic)
             {
                 const float dT = 1.0f / 100.0f;
 
@@ -67,17 +65,20 @@ public class PathProxyObject : MonoBehaviour
                 {
                     Vector3 end = CubicInterpUtils.Eval_Hermite(prev.m_transform.position, first.m_transform.position, second.m_transform.position, next.m_transform.position, t, 0, 0);
                     Vector3 segment = (end - start);
-                    approxLength += segment.magnitude;
+                    first.m_length = segment.magnitude;
+                    first.m_start1D = m_length;
+                    m_length += first.m_length;
                     start = end;
                     t += dT;
                 }
 
             }
-            else if (first.m_interpFlags.HasFlag(ENodeInterpolation.interp_linear))
+            else if (first.m_interpFlags == ENodeInterpolation.interp_linear)
             {
                 Vector3 segment = (second.m_transform.position - first.m_transform.position);
-                length += segment.magnitude;
-                approxLength += segment.magnitude;
+                first.m_length = segment.magnitude;
+                first.m_start1D = m_length;
+                m_length += first.m_length;
             }
         }
     }
