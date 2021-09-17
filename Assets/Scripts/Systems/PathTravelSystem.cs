@@ -19,10 +19,12 @@ public class PathTravelSystem : ComponentSystem
             PathData path = m_paths.Find(path => path.m_id == pathId);
 
             //this can be precomupted...
-            float speed1D = path.m_length / traveler.m_speed;
+            float travelTimeSeconds = path.m_length / traveler.m_speed;
+
+            float timeStep = Time.DeltaTime / travelTimeSeconds;
 
             //this can be computes once per segment...
-            traveler.m_t += speed1D;
+            traveler.m_t += timeStep;
 
             PathNode startNode = GetSegmentStartNode(traveler.m_t, path);
 
