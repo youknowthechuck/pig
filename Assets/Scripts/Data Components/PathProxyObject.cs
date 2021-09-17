@@ -1,12 +1,13 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
 public class PathProxyObject : MonoBehaviour
 {
-    public System.Collections.Generic.List<PathNode> m_nodes;
+    public List<PathNode> m_nodes;
     public uint m_id = 0;
-    float m_length = 0.0f;
+    public float m_length = 0.0f;
     
 
     // Start is called before the first frame update
