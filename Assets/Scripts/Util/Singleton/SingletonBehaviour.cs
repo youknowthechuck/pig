@@ -2,8 +2,7 @@
   Connor wrote this a long time ago.
 ---------------------------------------------------------------------------- */
 
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -29,11 +28,6 @@ public class SingletonBehaviour<T>
     /// <summary>
     /// Boolean to determine if Unity is shutting down.
     /// </summary>
-    private static bool m_applicationIsQuitting = false;
-
-    /// <summary>
-    /// Boolean to determine if Unity is shutting down.
-    /// </summary>
     private static bool m_hasInitialized = false;
 
     /// <summary>
@@ -43,12 +37,6 @@ public class SingletonBehaviour<T>
     {
         get
         {
-            if (m_applicationIsQuitting)
-            {
-                Debug.LogWarning("[Singleton] Instance '" + typeof(T) + "' already destroyed on application quit." + " Won't create again - returning null.");
-                return null;
-            }
-
             lock (m_instanceLock)
             {
                 if (m_instance == null)
@@ -78,9 +66,9 @@ public class SingletonBehaviour<T>
         }
     }
 
-    public static bool HasInitialized
+    public static bool HasInstance
     {
-        get { return m_hasInitialized; }
+        get { return m_instance != null; }
     }
 
     /// <summary>
@@ -88,6 +76,11 @@ public class SingletonBehaviour<T>
     /// </summary>
     public void Initialize()
     {
+        if (m_hasInitialized)
+        {
+            throw new InvalidOperationException(string.Format("SingletonBehavior.Initialize: A singleton instance of type '{0}' has already been initialized", typeof(T)));
+        }
+
         m_instance = this as T;
         m_hasInitialized = true;
         OnInitialize();
@@ -111,6 +104,10 @@ public class SingletonBehaviour<T>
     /// </summary>
     public void OnDestroy()
     {
-        m_applicationIsQuitting = true;
+        if(ReferenceEquals(this, m_instance))
+        {
+            m_instance = null;
+            m_hasInitialized = false;
+        }
     }
 }
