@@ -5,19 +5,14 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class PathProxyObject : MonoBehaviour
 {
-    public List<PathNode> m_nodes;
-    public uint m_id = 0;
-    public float m_length = 0.0f;
-    
+    public PathData pathData = new PathData();
 
-    // Start is called before the first frame update
     void Start()
     {
         UpdateNodeListFromChildren();
         CalulateTotalLength();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Application.isEditor)
@@ -31,28 +26,28 @@ public class PathProxyObject : MonoBehaviour
     {
         foreach (Transform child in transform)
         {
-            if (!m_nodes.Exists(node => node.m_transform == child))
+            if (!pathData.nodes.Exists(node => node.m_transform == child))
             {
                 PathNode newNode = new PathNode();
                 newNode.m_transform = child;
                 newNode.m_interpFlags |= ENodeInterpolation.interp_cubic;
-                m_nodes.Add(newNode);
+                pathData.nodes.Add(newNode);
             }
         }
     }
 
     void CalulateTotalLength()
     {
-        m_length = 0.0f;
-        for (int i = 0, j = 1; j < m_nodes.Count; ++i, ++j)
+        pathData.length = 0.0f;
+        for (int i = 0, j = 1; j < pathData.nodes.Count; ++i, ++j)
         {
             int prevIndex = Math.Max(i - 1, 0);
-            int nextIndex = Math.Min(j + 1, m_nodes.Count - 1);
+            int nextIndex = Math.Min(j + 1, pathData.nodes.Count - 1);
 
-            PathNode first = m_nodes[i];
-            PathNode second = m_nodes[j];
-            PathNode prev = m_nodes[prevIndex];
-            PathNode next = m_nodes[nextIndex];
+            PathNode first = pathData.nodes[i];
+            PathNode second = pathData.nodes[j];
+            PathNode prev = pathData.nodes[prevIndex];
+            PathNode next = pathData.nodes[nextIndex];
 
             if (first.m_interpFlags == ENodeInterpolation.interp_cubic)
             {
@@ -67,8 +62,8 @@ public class PathProxyObject : MonoBehaviour
                     Vector3 end = CubicInterpUtils.Eval_Hermite(prev.m_transform.position, first.m_transform.position, second.m_transform.position, next.m_transform.position, t, 0, 0);
                     Vector3 segment = (end - start);
                     first.m_length = segment.magnitude;
-                    first.m_start1D = m_length;
-                    m_length += first.m_length;
+                    first.m_start1D = pathData.length;
+                    pathData.length += first.m_length;
                     start = end;
                     t += dT;
                 }
@@ -78,8 +73,8 @@ public class PathProxyObject : MonoBehaviour
             {
                 Vector3 segment = (second.m_transform.position - first.m_transform.position);
                 first.m_length = segment.magnitude;
-                first.m_start1D = m_length;
-                m_length += first.m_length;
+                first.m_start1D = pathData.length;
+                pathData.length += first.m_length;
             }
         }
     }

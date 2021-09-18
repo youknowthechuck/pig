@@ -1,8 +1,9 @@
 using UnityEngine;
+using System.Collections.Generic;
 
-public struct PathData
+public class PathData
 {
-    public PathNode[] m_nodes;
-    public float m_length;
-    public uint m_id;
+    public List<PathNode> nodes = new List<PathNode>();
+    public float length;
+    public uint id;
 }

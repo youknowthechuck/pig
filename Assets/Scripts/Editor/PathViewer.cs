@@ -25,17 +25,17 @@ public class PathViewer : Editor
     {
         Handles.color = Color.red;
         Vector3 boxSize = new Vector3(.5f, .5f, .5f);
-        Handles.DrawWireCube(m_path.m_nodes[0].m_transform.position, boxSize);
+        Handles.DrawWireCube(m_path.pathData.nodes[0].m_transform.position, boxSize);
 
-        for (int i = 0, j = 1; j < m_path.m_nodes.Count; ++i, ++j)
+        for (int i = 0, j = 1; j < m_path.pathData.nodes.Count; ++i, ++j)
         {
             int prevIndex = Math.Max(i - 1, 0);
-            int nextIndex = Math.Min(j + 1, m_path.m_nodes.Count - 1);
+            int nextIndex = Math.Min(j + 1, m_path.pathData.nodes.Count - 1);
 
-            PathNode first = m_path.m_nodes[i];
-            PathNode second = m_path.m_nodes[j];
-            PathNode prev = m_path.m_nodes[prevIndex];
-            PathNode next = m_path.m_nodes[nextIndex];
+            PathNode first = m_path.pathData.nodes[i];
+            PathNode second = m_path.pathData.nodes[j];
+            PathNode prev = m_path.pathData.nodes[prevIndex];
+            PathNode next = m_path.pathData.nodes[nextIndex];
 
             Handles.DrawWireCube(second.m_transform.position, boxSize);
 
