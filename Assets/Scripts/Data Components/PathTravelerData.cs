@@ -1,6 +1,4 @@
-using Unity.Entities;
-
-public struct PathTravelerData : IComponentData
+public struct PathTravelerData
 {
     public float m_t;
     //per second

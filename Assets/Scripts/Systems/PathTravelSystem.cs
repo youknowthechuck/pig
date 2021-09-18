@@ -1,19 +1,17 @@
 using System;
 using System.Collections.Generic;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
 using UnityEngine;
 
-public class PathTravelSystem : ComponentSystem
+public class PathTravelSystem
 {
     List<PathProxyObject> m_paths = new List<PathProxyObject>();
 
-    protected override void OnUpdate()
+    void OnUpdate()
     {
         //this should only be done on map events (load, path opened?)...
         GatherPaths();
 
+        /*
         Entities.WithAll<PathTravelerData>().ForEach((ref Translation translation, ref PathTravelerData traveler) =>
         {
             uint pathId = traveler.m_pathId;
@@ -56,6 +54,7 @@ public class PathTravelSystem : ComponentSystem
 
             translation.Value = new float3(position.x, position.y, position.z);
         });
+        */
     }
 
     void GatherPaths()
