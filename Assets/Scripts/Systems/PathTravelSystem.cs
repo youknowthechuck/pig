@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PathTravelSystem
 {
-    List<PathProxyObject> m_paths = new List<PathProxyObject>();
+    List<PathObject> m_paths = new List<PathObject>();
 
     void OnUpdate()
     {
@@ -61,7 +61,7 @@ public class PathTravelSystem
     {
         m_paths.Clear();
 
-        m_paths = new List<PathProxyObject>(GameObject.FindObjectsOfType<PathProxyObject>());
+        m_paths = new List<PathObject>(GameObject.FindObjectsOfType<PathObject>());
     }
 
     PathNode GetSegmentStartNode(float t, PathNode[] nodes)

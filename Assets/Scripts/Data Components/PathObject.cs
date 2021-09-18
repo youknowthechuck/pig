@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class PathProxyObject : MonoBehaviour
+public class PathObject : MonoBehaviour
 {
     public PathData pathData = new PathData();
 

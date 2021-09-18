@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(PathProxyObject))]
+[CustomEditor(typeof(PathObject))]
 public class PathViewer : Editor
 {
-    PathProxyObject m_path;
+    PathObject m_path;
     // Start is called before the first frame update
     private void OnEnable()
     {
         SceneView.duringSceneGui -= this.OnSceneGUI;
         SceneView.duringSceneGui += this.OnSceneGUI;
-        m_path = (PathProxyObject)target;
+        m_path = (PathObject)target;
     }
 
     public override void OnInspectorGUI()

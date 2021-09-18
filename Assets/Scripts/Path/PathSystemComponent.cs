@@ -23,7 +23,7 @@ public class PathSystemComponent : SingletonBehaviour<PathSystemComponent>
     private void GetPaths()
     {
         m_paths.Clear();
-        foreach(PathProxyObject proxy in GameObject.FindObjectsOfType<PathProxyObject>())
+        foreach(PathObject proxy in GameObject.FindObjectsOfType<PathObject>())
         {
             m_paths.Add(proxy.pathData);
         }
