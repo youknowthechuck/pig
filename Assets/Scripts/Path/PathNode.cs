@@ -14,8 +14,9 @@ public enum ENodeInterpolation
 public class PathNode
 {
     public Transform m_transform;
+
     public uint m_index;
-    [SerializeField]
+
     public ENodeInterpolation m_interpFlags;
 
     [HideInInspector]
@@ -23,11 +24,10 @@ public class PathNode
     [HideInInspector]
     public float m_start1D;
 
-    public float GetLocalTime(float t, float totalLength)
+    public float GetLocalTime(float t, float totalLength )
     {
-        float globalPos = totalLength * t;
-        float localPos = globalPos - m_start1D;
+        float segmentSpan = m_length / totalLength;
 
-        return (localPos - m_start1D) / (m_length);
+        return (t - m_start1D) / (segmentSpan);
     }
 }

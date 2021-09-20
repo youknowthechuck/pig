@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,13 +7,11 @@ public class PathFollower : MonoBehaviour
 {
     private float m_t;
 
-    // For debugging
     [SerializeField]
-    private float m_speed;     //per second
+    private float m_speed = 1.0f;     //per second
 
-    // For debugging
     [SerializeField]
-    private uint m_pathId;
+    private PathObject m_path;
 
     public float PathRatio
     {
@@ -24,54 +23,53 @@ public class PathFollower : MonoBehaviour
         get { return m_speed; }
     }
 
-    public uint PathId
+    public PathObject Path
     {
-        get { return m_pathId; }
+        get { return m_path; }
+        set { m_path = value; }
     }
 
     void Start()
     {
-        
+        m_t = 0.0f;
     }
 
     void Update()
     {
-        PathSystemComponent pathSystem = PathSystemComponent.Instance;
-
-        uint pathId = m_pathId;
-        PathData path = pathSystem.Paths.Find(path => path.id == pathId);
-
         //this can be precomputed...
-        float travelTimeSeconds = path.length / m_speed;
+        float travelTimeSeconds = m_path.Length / m_speed;
 
         float timeStep = Time.deltaTime / travelTimeSeconds;
 
         //this can be computed once per segment...
         m_t += timeStep;
 
-        PathNode startNode = GetSegmentStartNode(m_t, path.nodes);
+        int startNodeIndex = GetSegmentStartNodeIndex(m_t, m_path.Nodes);
 
-        float localTime = startNode.GetLocalTime(m_t, path.length);
+        PathNode startNode = Path.Nodes[startNodeIndex];
+
+        float localTime = startNode.GetLocalTime(m_t, m_path.Length);
         Vector3 position = transform.position;
 
         if (startNode.m_interpFlags == ENodeInterpolation.interp_cubic)
         {
-            uint prevIndex = startNode.m_index == 0 ? 0 : startNode.m_index - 1;
-            uint nextIndex = (uint)Mathf.Min((int)startNode.m_index + 1, path.nodes.Count);
-            uint nextNextIndex = (uint)Mathf.Min((int)nextIndex + 1, (int)nextIndex);
+            //this shit sucks move the next node/previous node logic into the path
+            int prevIndex = Math.Max(startNodeIndex - 1, 0);
+            int nextIndex = Math.Min(startNodeIndex + 1, Path.Nodes.Count - 1);
+            int nextNextIndex = Math.Min(nextIndex + 1, Path.Nodes.Count - 1);
 
-            position = CubicInterpUtils.Eval_Hermite(path.nodes[(int)prevIndex].m_transform.position,
+            position = CubicInterpUtils.Eval_Hermite(m_path.Nodes[prevIndex].m_transform.position,
                                                             startNode.m_transform.position,
-                                                            path.nodes[(int)nextIndex].m_transform.position,
-                                                            path.nodes[(int)nextNextIndex].m_transform.position,
-                                                            m_t,
+                                                            m_path.Nodes[nextIndex].m_transform.position,
+                                                            m_path.Nodes[nextNextIndex].m_transform.position,
+                                                            localTime,
                                                             0,
                                                             0);
         }
         else if (startNode.m_interpFlags == ENodeInterpolation.interp_linear)
         {
-            uint nextIndex = (uint)Mathf.Min((int)startNode.m_index + 1, path.nodes.Count);
-            PathNode nextNode = path.nodes[(int)nextIndex];
+            int nextIndex = Math.Min(startNodeIndex + 1, Path.Nodes.Count - 1);
+            PathNode nextNode = m_path.Nodes[nextIndex];
             Vector3 line = nextNode.m_transform.position - startNode.m_transform.position;
             position = startNode.m_transform.position + line * localTime;
         }
@@ -79,21 +77,16 @@ public class PathFollower : MonoBehaviour
         transform.position = position;
     }
 
-    PathNode GetSegmentStartNode(float t, List<PathNode> nodes)
+    int GetSegmentStartNodeIndex(float t, List<PathNode> nodes)
     {
-        PathNode start = nodes[0];
-        //walk nodes until we go past t, then return the previous
-        foreach (PathNode node in nodes)
+        int i = 0;
+        for (; i < nodes.Count; ++i)
         {
-            if (node.m_start1D > t)
+            if (nodes[i].m_start1D > t)
             {
                 break;
             }
-            else
-            {
-                start = node;
-            }
         }
-        return start;
+        return i-1;
     }
 }
