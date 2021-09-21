@@ -75,6 +75,12 @@ public class PathFollower : MonoBehaviour
         }
 
         transform.position = position;
+
+        //@todo: move destroy logic somewhere to do more heavy lifting when there is HP or whatever
+        if (m_t >= 1.0f)
+        {
+            Destroy(gameObject);
+        }
     }
 
     int GetSegmentStartNodeIndex(float t, List<PathNode> nodes)
