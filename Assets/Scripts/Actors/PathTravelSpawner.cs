@@ -16,7 +16,7 @@ public class PathTravelSpawner : MonoBehaviour
         public float spawnTime;
     }
 
-    private List<SpawnInterval> m_pendingSpawns;
+    private List<SpawnInterval> m_pendingSpawns = new List<SpawnInterval>();
 
     [SerializeField]
     private PathObject m_travelPath;
@@ -58,7 +58,7 @@ public class PathTravelSpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        m_pendingSpawns.RemoveAll(interval =>        
+        m_pendingSpawns.RemoveAll(interval =>
             CheckInterval(interval, Time.deltaTime) == true
         );
         m_timer += Time.deltaTime;
