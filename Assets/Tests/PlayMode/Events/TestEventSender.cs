@@ -2,13 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestEventSender : MonoBehaviour
+namespace Tests
 {
-    public void SendEvent(int payload, GameObject target)
+    public class TestEventSender : MonoBehaviour
     {
-        TestEvent e = new TestEvent();
-        e.payload = payload;
+        public void SendEvent(int payload, GameObject target)
+        {
+            TestEvent e = new TestEvent();
+            e.payload = payload;
 
-        EventCore.SendTo(this, target, e);
+            EventCore.SendTo(this, target, e);
+        }
     }
 }
