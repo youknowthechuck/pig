@@ -19,10 +19,10 @@ public class PathTravelSpawner : MonoBehaviour
     private List<SpawnInterval> m_pendingSpawns = new List<SpawnInterval>();
 
     [SerializeField]
-    private PathObject m_travelPath;
+    private PathObject m_travelPath = null;
 
     [SerializeField]
-    private List<WaveDefinition> m_spawnWaves;
+    private List<WaveDefinition> m_spawnWaves = new List<WaveDefinition>();
 
     private float m_timer;
 

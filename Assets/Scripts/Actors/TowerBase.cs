@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TowerBase : MonoBehaviour
+public class TowerBase : PigScript
 {
     //1.0 == 1 projectile per second
     [SerializeField]
@@ -55,7 +55,7 @@ public class TowerBase : MonoBehaviour
             return;
         }
 
-        PathFollower target = m_targetingBehavior.FindTarget(m_range);
+        TargetBase target = m_targetingBehavior.FindTarget(m_range);
 
         if (target != null)
         {

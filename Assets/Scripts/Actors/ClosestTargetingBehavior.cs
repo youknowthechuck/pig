@@ -15,29 +15,22 @@ public class ClosestTargetingBehavior : TargetingBehavior
     {
     }
 
-    public override PathFollower FindTarget(float searchRadius)
+    public override TargetBase FindTarget(float searchRadius)
     {
-        PathFollower nearestTarget = null;
+        TargetBase nearestTarget = null;
         float nearestDistance = Mathf.Infinity;
 
         float rangeSqr = searchRadius * searchRadius;
 
-        GameObject[] potentialTargets = GameObject.FindGameObjectsWithTag("PathFollower");
+        GameObject[] potentialTargets = GameObject.FindGameObjectsWithTag("Target");
 
         foreach (GameObject potential in potentialTargets)
         {
-            PathFollower potentialFollower = potential.GetComponent<PathFollower>();
-
-            if (potentialFollower == null)
-            {
-                continue;
-            }
-
-            float distance = (potentialFollower.transform.position - transform.position).sqrMagnitude;
+            float distance = (potential.transform.position - transform.position).sqrMagnitude;
 
             if (distance < nearestDistance && distance <= rangeSqr)
             {
-                nearestTarget = potentialFollower;
+                nearestTarget = potential.GetComponent<TargetBase>();
                 nearestDistance = distance;
             }
         }

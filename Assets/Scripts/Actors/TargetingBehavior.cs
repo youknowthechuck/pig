@@ -16,7 +16,7 @@ public class TargetingBehavior : MonoBehaviour
         
     }
 
-    public virtual PathFollower FindTarget(float searchRadius)
+    public virtual TargetBase FindTarget(float searchRadius)
     {
         //default implementation, you get nothing good day sir
         return null;

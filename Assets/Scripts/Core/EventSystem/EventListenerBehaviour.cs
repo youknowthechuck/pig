@@ -5,8 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Base behaviour class for event listeners and broadcasters.
 /// </summary>
-public class EventListenerBehaviour 
-    : MonoBehaviour
+public class EventListenerBehaviour : MonoBehaviour
 {
     /// <summary>
     /// Boolean for determining if this behaviour has done auto event registration.
