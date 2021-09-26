@@ -10,6 +10,9 @@ public class ProjectileBase : PigScript
     [SerializeField]
     float m_speed = 1.0f;
 
+    [SerializeField][EnumFlags]
+    EDamageType m_damageType;
+
     private Bounds m_bounds;
 
     public int Damage
@@ -53,14 +56,22 @@ public class ProjectileBase : PigScript
     void OnTriggerEnter(Collider other)
     {
         DamageEvent e = new DamageEvent();
-        e.damageAmmount = m_damage;
+        e.damageInstance = new DamageInstance();
+
+        e.damageInstance.damageAmmount = m_damage;
+        e.damageInstance.damageType = m_damageType;
+        e.damageInstance.damageOwner = gameObject;
 
         EventCore.SendTo<DamageEvent>(this, other.gameObject, e);
 
         Health myHP = GetComponent<Health>();
         if (myHP != null)
         {
-            myHP.TakeDamage(1);
+            DamageInstance selfDamage = new DamageInstance();
+            selfDamage.damageAmmount = 1;
+            selfDamage.damageType = EDamageType.DT_Base;
+            selfDamage.damageOwner = gameObject;
+            myHP.TakeDamage(selfDamage);
             if (!myHP.Alive)
             {
                 Destroy(gameObject);

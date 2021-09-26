@@ -2,31 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Health : MonoBehaviour
+public class Health : DamagedBehavior
 {
-    [SerializeField]
-    private int m_baseHealth = 0;
-
-    private int m_currentHealth;
-
-    public int BaseHealth
+    public Health()
     {
-        get { return m_baseHealth; }
-    }
-    public int CurrentHealth
-    {
-        get { return m_currentHealth; }
-    }
-
-    public bool Alive
-    { 
-        get { return CurrentHealth > 0; }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        m_currentHealth = m_baseHealth;
+        m_hpType = EHealthPool.HP_Base;
     }
 
     // Update is called once per frame
@@ -35,9 +15,12 @@ public class Health : MonoBehaviour
         
     }
 
-    public int TakeDamage(int damage)
+    public override int TakeDamage(DamageInstance damageInstance)
     {
-        m_currentHealth -= damage;
-        return m_currentHealth;
+        if (damageInstance.damageType.HasFlag(EDamageType.DT_Base))
+        {
+            m_currentHealth -= damageInstance.damageAmmount;
+        }
+        return damageInstance.damageAmmount;
     }
 }

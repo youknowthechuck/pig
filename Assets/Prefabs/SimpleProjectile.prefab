@@ -50,6 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_damage: 1
   m_speed: 15
+  m_damageType: 1
 --- !u!33 &104720176894726685
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -124,6 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36abeaffce1287b458ce5bd629639904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_hpType: 2
   m_baseHealth: 1
 --- !u!54 &8219984446573779020
 Rigidbody:

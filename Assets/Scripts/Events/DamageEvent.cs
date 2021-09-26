@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class DamageEvent : EventBase
 {
-    public int damageAmmount;
+    public DamageInstance damageInstance;
 }
