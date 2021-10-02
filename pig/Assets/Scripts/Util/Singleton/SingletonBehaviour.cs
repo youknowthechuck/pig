@@ -94,6 +94,22 @@ public class SingletonBehaviour<T>
 
     }
 
+
+    void Awake()
+    {
+        if (HasInstance )
+        {
+            if (Instance != this)
+            {
+                throw new InvalidOperationException(string.Format("SingletonBehaviour.Awake: A singleton instance of type '{0}' already exists", typeof(T)));
+            }
+        }
+        else
+        {
+            Initialize();
+        }
+    }
+
     /// <summary>
     /// When Unity quits, it destroys objects in a random order.
     /// In principle, a Singleton is only destroyed when application quits.
@@ -102,7 +118,7 @@ public class SingletonBehaviour<T>
     ///   even after stopping playing the Application. Really bad!
     /// So, this was made to be sure we're not creating that buggy ghost object.
     /// </summary>
-    public void OnDestroy()
+    void OnDestroy()
     {
         if(ReferenceEquals(this, m_instance))
         {

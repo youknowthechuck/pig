@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Testbeds/Connor/Connor_UITest.unity
+    guid: 7066db8e2ad8ee744a5f517b09ffe926
+  - enabled: 1
+    path: Assets/Scenes/Testbeds/Connor/Connor_PolyTest.unity
+    guid: 52fd2df98dcd9e94cad98b2aaf34835a
   m_configObjects: {}
