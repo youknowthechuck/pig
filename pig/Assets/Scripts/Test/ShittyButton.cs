@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class ShittyButton : MonoBehaviour
 {
     public Button bigBoy;
+    public GameObject towerPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -16,6 +17,9 @@ public class ShittyButton : MonoBehaviour
 
     void ButtonPressed()
     {
-        SceneManager.LoadScene("Connor_PolyTest", LoadSceneMode.Single);
+        TowerBuilderMode builder = FindObjectOfType<TowerBuilderMode>();
+        builder.AssignTowerPrefab(towerPrefab);
+
+        FindObjectOfType<TowerBuilderMode>().EnableBuilderMode();
     }
 }

@@ -1,6 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+/* ----------------------------------------------------------------------------
+  Copyright (c) Chuck Martin and Connor Hollis. All Rights Reserved.
+---------------------------------------------------------------------------- */
 
 // Bootstrap Bill you're a liar and will spend an eternity aboard this ship!
 public class Bootstrap : SingletonBehaviour<Bootstrap>
