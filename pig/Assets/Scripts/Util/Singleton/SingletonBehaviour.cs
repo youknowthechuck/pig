@@ -1,11 +1,13 @@
 ﻿/* ----------------------------------------------------------------------------
-  Connor wrote this a long time ago.
+  Copyright (c) Chuck Martin and Connor Hollis. All Rights Reserved.
 ---------------------------------------------------------------------------- */
 
 using System;
 using UnityEngine;
 
 /// <summary>
+/// Singleton class that MonoBehaviours can derive from. 
+/// Useful for creating global objects/scripts that will persist across level loads.
 /// Be aware this will not prevent a non singleton constructor
 ///   such as `T myT = new T();`
 /// To prevent that, add `protected T () {}` to your singleton class.
@@ -66,24 +68,45 @@ public class SingletonBehaviour<T>
         }
     }
 
+    /// <summary>
+    /// Returns true if we have an assigned instance reference.
+    /// </summary>
     public static bool HasInstance
     {
         get { return m_instance != null; }
     }
 
     /// <summary>
-    /// Initialization function derived classes can override.
+    /// Returns true if the assigned instance we have has been initialized.
     /// </summary>
-    public void Initialize()
+    public static bool IsInitialized
     {
-        if (m_hasInitialized)
+        get { return m_hasInitialized; }
+    }
+
+    /// <summary>
+    /// Manually called by clients when they want to destroy the singleton instance.
+    /// </summary>
+    public void Teardown()
+    {
+        if(!HasInstance)
         {
-            throw new InvalidOperationException(string.Format("SingletonBehavior.Initialize: A singleton instance of type '{0}' has already been initialized", typeof(T)));
+            throw new InvalidOperationException(string.Format("SingletonBehavior.Teardown: No Singleton script of type '{0}' is present.", typeof(T)));
         }
 
-        m_instance = this as T;
-        m_hasInitialized = true;
-        OnInitialize();
+        lock (m_instanceLock)
+        {
+            // No thread safety because we'd have to lock twice
+            if (ReferenceEquals(this, m_instance))
+            {
+                m_instance = null;
+                m_hasInitialized = false;
+
+                OnTeardown();
+
+                Destroy(this);
+            }
+        }
     }
 
     /// <summary>
@@ -94,10 +117,22 @@ public class SingletonBehaviour<T>
 
     }
 
-
-    void Awake()
+    /// <summary>
+    /// Teardown function derived classes can override.
+    /// </summary>
+    protected virtual void OnTeardown()
     {
-        if (HasInstance )
+
+    }
+
+    /// <summary>
+    /// This is called any time an instance of this script is created. 
+    /// If we attempt to create two instances of the same script it will throw an exception.
+    /// This would typically happen if you place or construct two instances in the world.
+    /// </summary>
+    private void Awake()
+    {
+        if (HasInstance)
         {
             if (Instance != this)
             {
@@ -111,6 +146,25 @@ public class SingletonBehaviour<T>
     }
 
     /// <summary>
+    /// Called when a new instance of this script has been instantiated.
+    /// </summary>
+    private void Initialize()
+    {
+        if (m_hasInitialized)
+        {
+            throw new InvalidOperationException(string.Format("SingletonBehavior.Initialize: A singleton instance of type '{0}' has already been initialized.", typeof(T)));
+        }
+
+        lock (m_instanceLock)
+        {
+            m_instance = this as T;
+            m_hasInitialized = true;
+
+            OnInitialize();
+        }
+    }
+
+    /// <summary>
     /// When Unity quits, it destroys objects in a random order.
     /// In principle, a Singleton is only destroyed when application quits.
     /// If any script calls Instance after it have been destroyed, 
@@ -118,12 +172,17 @@ public class SingletonBehaviour<T>
     ///   even after stopping playing the Application. Really bad!
     /// So, this was made to be sure we're not creating that buggy ghost object.
     /// </summary>
-    void OnDestroy()
+    private void OnDestroy()
     {
-        if(ReferenceEquals(this, m_instance))
+        lock (m_instanceLock)
         {
-            m_instance = null;
-            m_hasInitialized = false;
+            if (ReferenceEquals(this, m_instance))
+            {
+                m_instance = null;
+                m_hasInitialized = false;
+
+                OnTeardown();
+            }
         }
     }
 }
