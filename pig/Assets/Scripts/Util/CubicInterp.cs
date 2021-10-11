@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -47,6 +48,44 @@ public static class CubicInterpUtils
         float dti3 = -6 * t2 + 6 * t;
 
         return (dti0 * p1 + dti1 * c0 + dti2 * c1 + dti3 * p2);
+    }
+
+    //closest spline point is non-trivial, I guess. Heres how this approximation works:
+    //1) treat each segment as a straight line, project worldLocation onto that line segment.
+    //2) use that projection to estimate the t value that will be closest to spline on that segment
+    //3) lookup actual spline value at t to adjust for curvature, find closest spline segment to location
+    //4) return closest of all the found segment points
+    //
+    //not guaranteed accurate but should be good enough for government work
+    public static Vector3 Closest_Point(Vector3 worldLocation, PathObject path)
+    {
+        (float, Vector3) closestSegment = (Mathf.Infinity, Vector3.zero);
+
+        for (int i = 0; i < path.Nodes.Count - 1; ++i)
+        {
+            PathNode point = path.Nodes[i];
+            PathNode next = path.GetNextNode(point);
+
+            Vector3 segment = next.m_transform.position - point.m_transform.position;
+
+            Vector3 to = worldLocation - point.m_transform.position;
+
+            float toDot = Vector3.Dot(to, segment.normalized) / segment.magnitude;
+
+            PathNode prev = path.GetPreviousNode(point);
+            PathNode nextnext = path.GetNextNode(next);
+
+            Vector3 pathPoint = Eval_Hermite(prev.m_transform.position, point.m_transform.position, next.m_transform.position, nextnext.m_transform.position, Mathf.Clamp(toDot, 0.0f, 1.0f), 0.0f, 0.0f);
+            
+            float d = (pathPoint - worldLocation).sqrMagnitude;
+            
+            if (d < closestSegment.Item1)
+            {
+                closestSegment = (d, pathPoint);
+            }
+        }
+
+        return closestSegment.Item2;
     }
 
     //https://medium.com/@all2one/how-to-compute-the-length-of-a-spline-e44f5f04c40

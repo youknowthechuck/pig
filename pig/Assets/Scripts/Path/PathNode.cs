@@ -15,7 +15,7 @@ public class PathNode
 {
     public Transform m_transform;
 
-    public uint m_index;
+    public int m_index;
 
     public ENodeInterpolation m_interpFlags;
 

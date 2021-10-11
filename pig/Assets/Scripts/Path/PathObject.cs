@@ -23,17 +23,21 @@ public class PathObject : MonoBehaviour
 
     void Start()
     {
-        UpdateNodeListFromChildren();
-        CalulateTotalLength();
+        Setup();
     }
 
     void Update()
     {
         if (Application.isEditor)
         {
-            UpdateNodeListFromChildren();
-            CalulateTotalLength();
+            Setup();
         }
+    }
+
+    void Setup()
+    {
+        UpdateNodeListFromChildren();
+        CalulateSegmentLengths();
     }
 
     void UpdateNodeListFromChildren()
@@ -45,12 +49,13 @@ public class PathObject : MonoBehaviour
                 PathNode newNode = new PathNode();
                 newNode.m_transform = child;
                 newNode.m_interpFlags |= ENodeInterpolation.interp_cubic;
+                newNode.m_index = m_nodes.Count;
                 m_nodes.Add(newNode);
             }
         }
     }
 
-    void CalulateTotalLength()
+    void CalulateSegmentLengths()
     {
         m_length = 0.0f;
         for (int i = 0, j = 1; j < m_nodes.Count; ++i, ++j)
@@ -96,5 +101,17 @@ public class PathObject : MonoBehaviour
         {
             node.m_start1D /= m_length;
         }
+    }
+
+    public PathNode GetPreviousNode(PathNode fromNode)
+    {
+        int prevIndex = Math.Max(fromNode.m_index - 1, 0);
+        return m_nodes[prevIndex];
+    }
+
+    public PathNode GetNextNode(PathNode fromNode)
+    {
+        int nextIndex = Math.Min(fromNode.m_index + 1, m_nodes.Count - 1);
+        return m_nodes[nextIndex];
     }
 }
