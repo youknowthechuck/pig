@@ -161,10 +161,6 @@ public class TowerBehaviorStateMachine : MonoBehaviour
 {
     private StateMachine m_internalStateMachine;
 
-    public TowerBehaviorStateMachine(TowerBase tower)
-    {
-
-    }
     // Start is called before the first frame update
     void Start()
     {

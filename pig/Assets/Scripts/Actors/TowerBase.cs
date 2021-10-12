@@ -30,13 +30,6 @@ public class TowerBase : PigScript
         get { return m_range; }
     }
 
-    private TowerBehaviorStateMachine m_behaviorSM;
-
-    public TowerBase()
-    {
-        m_behaviorSM = new TowerBehaviorStateMachine(this);
-    }
-
     // Start is called before the first frame update
     void Start()
     {
