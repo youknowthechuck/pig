@@ -19,10 +19,10 @@ public class State
         StateLinks.Add(link);
     }
 
-    public virtual void Enter() { }
+    public virtual void Enter(object[] input) { }
 
     public virtual void Tick() { }
 
-    public virtual void Exit() { }
+    public virtual object[] Exit() { return null; }
 }
 

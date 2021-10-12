@@ -6,7 +6,7 @@ namespace Tests
     {
         public float timer = 0.0f;
 
-        public override void Enter()
+        public override void Enter(object[] unused)
         {
             timer = 0.0f;
         }

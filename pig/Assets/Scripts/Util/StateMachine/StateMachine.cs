@@ -79,14 +79,16 @@ public class StateMachine
             return;
         }
 
+        object[] transitionParams = null;
+
         if(CurrentState != null)
         {
-            CurrentState.Exit();
+            transitionParams = CurrentState.Exit();
         }
 
         PreviousState = CurrentState;
         CurrentState = nextState;
 
-        CurrentState.Enter();
+        CurrentState.Enter(transitionParams);
     }
 }
