@@ -106,7 +106,11 @@ public class TowerBuilderMode : PigScript
         // Wow this is stupid and hacky who would ever hard code a mouse input directly in code???
         if(Input.GetMouseButtonDown(0) && ValidateTowerPosition())
         {
-            Instantiate(m_towerPrefab, hit.point, Quaternion.identity);
+            GameObject placedObject = Instantiate(m_towerPrefab, hit.point, Quaternion.identity);
+
+            TowerPlacedEvent e = new TowerPlacedEvent();
+
+            EventCore.SendTo<TowerPlacedEvent>(this, placedObject, e);
 
             DisableBuilderMode();
         }

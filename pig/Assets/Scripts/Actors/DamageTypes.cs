@@ -5,10 +5,10 @@ using UnityEngine;
 [System.Flags]
 public enum EDamageType
 {
-    DT_Base,
-    DT_BypassArmor,
-    DT_DamageArmorFully,
-    DT_BypassShield
+    DT_Base=1,
+    DT_BypassArmor=2,
+    DT_DamageArmorFully=4,
+    DT_BypassShield=8
 }
 
 //if you add something here make sure you add damage types above that make sense

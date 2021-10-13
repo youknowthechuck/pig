@@ -19,6 +19,11 @@ public class TowerBehaviorStatePlacement : State
     {
         return placed;
     }
+
+    public void SetPlaced(bool isPlaced)
+    {
+        placed = isPlaced;
+    }
 }
 
 public class TowerBehaviorStateWaitingToFire : State
@@ -157,14 +162,13 @@ public class TowerBehaviorStateFireProjectile : State
 ///        v         \
 ///  find target -> fire zee missile
 /// </summary>
-public class TowerBehaviorStateMachine : MonoBehaviour
+public class TowerBehaviorStateMachine : PigScript
 {
     private StateMachine m_internalStateMachine;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        TowerBase parent = gameObject.GetComponent<TowerBase>(); 
+        TowerBase parent = gameObject.GetComponent<TowerBase>();
 
         if (parent != null)
         {
@@ -184,14 +188,24 @@ public class TowerBehaviorStateMachine : MonoBehaviour
             waitState.AddStateLink(new StateLink(targetState, waitState.CanFire));
             targetState.AddStateLink(new StateLink(fireState, targetState.HasTarget));
             fireState.AddStateLink(new StateLink(waitState, fireState.DidFire));
-
-            m_internalStateMachine.Start<TowerBehaviorStateWaitingToFire>();
         }
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        m_internalStateMachine.Start<TowerBehaviorStatePlacement>();
     }
 
     // Update is called once per frame
     void Update()
     {
         m_internalStateMachine?.Tick();
+    }
+
+    [AutoRegisterEvent]
+    void HandleTowerPlacedEvent(TowerPlacedEvent e)
+    {
+        m_internalStateMachine.GetState<TowerBehaviorStatePlacement>().SetPlaced(true);
     }
 }

@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class DamagedBehavior : PigScript
 {
-    [SerializeField]
     protected EHealthPool m_hpType;
 
     [SerializeField]
     protected int m_baseHealth = 0;
 
     protected int m_currentHealth;
+
+    public EHealthPool HealthPoolType
+    {
+        get { return m_hpType; }
+    }
 
     public int BaseHealth
     {
