@@ -55,26 +55,30 @@ public class ProjectileBase : PigScript
 
     void OnTriggerEnter(Collider other)
     {
-        DamageEvent e = new DamageEvent();
-        e.damageInstance = new DamageInstance();
-
-        e.damageInstance.damageAmmount = m_damage;
-        e.damageInstance.damageType = m_damageType;
-        e.damageInstance.damageOwner = gameObject;
-
-        EventCore.SendTo<DamageEvent>(this, other.gameObject, e);
-
-        Health myHP = GetComponent<Health>();
-        if (myHP != null)
+        //@todo: this should be done with layers or whatever bullshit
+        if (other.gameObject.GetComponent<TargetBase>() != null)
         {
-            DamageInstance selfDamage = new DamageInstance();
-            selfDamage.damageAmmount = 1;
-            selfDamage.damageType = EDamageType.DT_Base;
-            selfDamage.damageOwner = gameObject;
-            myHP.TakeDamage(selfDamage);
-            if (!myHP.Alive)
+            DamageEvent e = new DamageEvent();
+            e.damageInstance = new DamageInstance();
+
+            e.damageInstance.damageAmmount = m_damage;
+            e.damageInstance.damageType = m_damageType;
+            e.damageInstance.damageOwner = gameObject;
+
+            EventCore.SendTo<DamageEvent>(this, other.gameObject, e);
+
+            Health myHP = GetComponent<Health>();
+            if (myHP != null)
             {
-                Destroy(gameObject);
+                DamageInstance selfDamage = new DamageInstance();
+                selfDamage.damageAmmount = 1;
+                selfDamage.damageType = EDamageType.DT_Base;
+                selfDamage.damageOwner = gameObject;
+                myHP.TakeDamage(selfDamage);
+                if (!myHP.Alive)
+                {
+                    Destroy(gameObject);
+                }
             }
         }
     }

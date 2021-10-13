@@ -38,7 +38,7 @@ public class TowerBehaviorStateWaitingToFire : State
     {
         canFire = false;
 
-        if (input.Length > 0)
+        if (input?.Length > 0)
         {
             lastFireTime = (float)input[0];
         }
@@ -192,6 +192,6 @@ public class TowerBehaviorStateMachine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        m_internalStateMachine.Tick();
+        m_internalStateMachine?.Tick();
     }
 }

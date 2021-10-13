@@ -65,6 +65,16 @@ public class PathFollower : MonoBehaviour
                                                             localTime,
                                                             0,
                                                             0);
+
+            Vector3 tangent = CubicInterpUtils.Eval_Tangent_Hermite(m_path.Nodes[prevIndex].m_transform.position,
+                                                            startNode.m_transform.position,
+                                                            m_path.Nodes[nextIndex].m_transform.position,
+                                                            m_path.Nodes[nextNextIndex].m_transform.position,
+                                                            localTime,
+                                                            0,
+                                                            0);
+
+            gameObject.transform.forward = tangent.normalized;
         }
         else if (startNode.m_interpFlags == ENodeInterpolation.interp_linear)
         {
@@ -72,6 +82,8 @@ public class PathFollower : MonoBehaviour
             PathNode nextNode = m_path.Nodes[nextIndex];
             Vector3 line = nextNode.m_transform.position - startNode.m_transform.position;
             position = startNode.m_transform.position + line * localTime;
+
+            gameObject.transform.forward = line.normalized;
         }
 
         transform.position = position;

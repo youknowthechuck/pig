@@ -4,7 +4,6 @@ using UnityEngine;
 [RequireComponent(typeof(TowerBehaviorStateMachine))]
 public class TowerBase : PigScript
 {
-
     //1.0 == 1 projectile per second
     [SerializeField]
     private float m_baseAttackTime = 1.0f;
