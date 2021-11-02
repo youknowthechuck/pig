@@ -2,23 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(DamagerBehavior))]
 public class ProjectileBase : PigScript
 {
     [SerializeField]
-    private int m_damage = 1;
-
-    [SerializeField]
     float m_speed = 1.0f;
-
-    [SerializeField][EnumFlags]
-    EDamageType m_damageType;
 
     private Bounds m_bounds;
 
-    public int Damage
-    { 
-        get { return m_damage; } 
-    }
+    DamagerBehavior m_damager;
 
     public float Speed
     {
@@ -37,6 +29,8 @@ public class ProjectileBase : PigScript
         m_bounds = GetComponent<MeshRenderer>().bounds;
 
         Physics.IgnoreCollision(GetComponent<Collider>(), GetComponentInParent<Collider>());
+
+        m_damager = GetComponent<DamagerBehavior>();
     }
 
     // Update is called once per frame
@@ -58,27 +52,24 @@ public class ProjectileBase : PigScript
         //@todo: this should be done with layers or whatever bullshit
         if (other.gameObject.GetComponent<TargetBase>() != null)
         {
-            DamageEvent e = new DamageEvent();
-            e.damageInstance = new DamageInstance();
+            m_damager.TryDoDamage(other.gameObject);
+        }
 
-            e.damageInstance.damageAmmount = m_damage;
-            e.damageInstance.damageType = m_damageType;
-            e.damageInstance.damageOwner = gameObject;
+        Health myHP = GetComponent<Health>();
+        if (myHP != null)
+        {
+            //jank, kill ourselves
+            DamageInstance selfDamage = new DamageInstance();
 
-            EventCore.SendTo<DamageEvent>(this, other.gameObject, e);
+            selfDamage.damageAmmount = 1;
+            selfDamage.damageType = EDamageType.DT_Base;
+            selfDamage.damageOwner = gameObject;
 
-            Health myHP = GetComponent<Health>();
-            if (myHP != null)
+            myHP.TakeDamage(selfDamage);
+
+            if (!myHP.Alive)
             {
-                DamageInstance selfDamage = new DamageInstance();
-                selfDamage.damageAmmount = 1;
-                selfDamage.damageType = EDamageType.DT_Base;
-                selfDamage.damageOwner = gameObject;
-                myHP.TakeDamage(selfDamage);
-                if (!myHP.Alive)
-                {
-                    Destroy(gameObject);
-                }
+                Destroy(gameObject);
             }
         }
     }

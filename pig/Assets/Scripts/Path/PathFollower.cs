@@ -91,7 +91,7 @@ public class PathFollower : MonoBehaviour
         //@todo: move destroy logic somewhere to do more heavy lifting when there is HP or whatever
         if (m_t >= 1.0f)
         {
-            Destroy(gameObject);
+            FinishTrip();
         }
     }
 
@@ -106,5 +106,19 @@ public class PathFollower : MonoBehaviour
             }
         }
         return i-1;
+    }
+
+    void FinishTrip()
+    {
+        DamagerBehavior endDamager = GetComponent<DamagerBehavior>();
+
+        if (endDamager != null)
+        {
+            Player player = UnityEngine.Object.FindObjectOfType(typeof(Player)) as Player;
+
+            endDamager.TryDoDamage(player.gameObject);
+        }
+
+        Destroy(gameObject);
     }
 }
