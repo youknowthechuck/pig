@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class Player : PigScript
 {
     [SerializeField]
-    Text m_HealthUI;
+    Text m_HealthUI = null;
 
     DamagedBehavior m_baseHealth;
 

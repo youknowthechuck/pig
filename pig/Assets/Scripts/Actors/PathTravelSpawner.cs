@@ -21,10 +21,11 @@ public class PathTravelSpawner : MonoBehaviour
     [SerializeField]
     private PathObject m_travelPath = null;
 
-    [SerializeField]
-    private List<WaveDefinition> m_spawnWaves = new List<WaveDefinition>();
+    private List<WaveDefinition> m_spawnWaves = null;
 
     private float m_timer;
+
+    private bool m_ready = false;
 
     public PathObject TravelPath
     {
@@ -34,14 +35,14 @@ public class PathTravelSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        m_timer = 0.0f;
-
-        SetIntervals();
+        m_ready = false;
     }
 
-    void SetIntervals()
+    public void Init(List<WaveDefinition> waves)
     {
-        m_pendingSpawns = new List<SpawnInterval>();
+        m_timer = 0.0f;
+
+        m_spawnWaves = waves;
 
         foreach (WaveDefinition wave in m_spawnWaves)
         {
@@ -53,15 +54,20 @@ public class PathTravelSpawner : MonoBehaviour
                 m_pendingSpawns.Add(interval);
             }
         }
+
+        m_ready = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        m_pendingSpawns.RemoveAll(interval =>
-            CheckInterval(interval, Time.deltaTime) == true
-        );
-        m_timer += Time.deltaTime;
+        if (m_ready)
+        {
+            m_pendingSpawns?.RemoveAll(interval =>
+                CheckInterval(interval, Time.deltaTime) == true
+            );
+            m_timer += Time.deltaTime;
+        }
     }
 
     bool CheckInterval(SpawnInterval spawnInterval, float dT)
@@ -78,5 +84,10 @@ public class PathTravelSpawner : MonoBehaviour
         }
 
         return shouldActivate;
+    }
+
+    public bool HasPendingSpawns()
+    {
+        return m_pendingSpawns.Count > 0;
     }
 }
