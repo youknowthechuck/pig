@@ -23,6 +23,6 @@ public class RoundStartButton : MonoBehaviour
 
     void ButtonPressed()
     {
-        m_director?.BeginNextRound(false);
+        m_director?.BeginNextRound(true);
     }
 }
