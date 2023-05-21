@@ -24,7 +24,8 @@ public class PathTravelSpawner : MonoBehaviour
 
     public void SpawnObject(PathFollower prefab)
     {
-        PathFollower spawned = Object.Instantiate<PathFollower>(prefab, transform);
+        
+        PathFollower spawned = Object.Instantiate<PathFollower>(prefab, m_travelPath.Nodes[0].m_transform.position, m_travelPath.Nodes[0].m_transform.rotation, transform);
         if (spawned != null)
         {
             spawned.Path = m_travelPath;

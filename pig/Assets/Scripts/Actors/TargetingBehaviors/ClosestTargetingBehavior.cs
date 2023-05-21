@@ -7,7 +7,7 @@ public class ClosestTargetingBehavior : TargetingBehavior
     // Start is called before the first frame update
     void Start()
     {
-        
+        PrettyName = "Nearest";
     }
 
     // Update is called once per frame

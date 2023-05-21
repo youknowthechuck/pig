@@ -20,6 +20,19 @@ public class TargetBase : PigScript
         }
     }
 
+    public int GetCurrentHealthTotal()
+    {
+        int total = 0;
+        foreach (DamagedBehavior damageSection in m_healthBehaviors)
+        {
+            if (damageSection != null)
+            {
+                //this ignores the armor section damage reduction...
+                total += damageSection.CurrentHealth;
+            }
+        }
+        return total;
+    }
 
     [AutoRegisterEvent]
     void HandleDamageEvent(DamageEvent e)
@@ -37,6 +50,12 @@ public class TargetBase : PigScript
         Health baseHp = m_healthBehaviors[((int)EHealthPool.HP_Base)] as Health;
         if (!baseHp.Alive)
         {
+            //tell the damage owner they did lethal damage
+            UnitKillEvent killEvent = new UnitKillEvent();
+            killEvent.killed = gameObject;
+
+            EventCore.SendTo<UnitKillEvent>(this, e.damageInstance.damageOwner, killEvent);
+
             Destroy(gameObject);
         }
     }

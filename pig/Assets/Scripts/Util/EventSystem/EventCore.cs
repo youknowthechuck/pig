@@ -163,19 +163,28 @@ public class EventCore : SingletonClass<EventCore>
             return;
         }
 
-        foreach (EventDelegate<T> callback in eventContainer)
+        GameObject next = to;
+        while (next != null)
         {
-            Component originalTarget = callback.Target as Component;
-            if (originalTarget.gameObject.Equals(to))
+            foreach (EventDelegate<T> callback in eventContainer)
             {
-                eventInstance.SetData(from, to);
+                Component originalTarget = callback.Target as Component;
+                if (originalTarget.gameObject.Equals(next))
+                {
+                    eventInstance.SetData(from, next);
 
-                eventInstance.PreSend();
-                callback.Invoke(eventInstance);
-                eventInstance.PostSend();
+                    eventInstance.PreSend();
+                    callback.Invoke(eventInstance);
+                    eventInstance.PostSend();
 
-                break;
+                    break;
+                }
             }
+
+            //dispatch event all the way up the target owner chain
+            //ObjectOwner ownerComponent = next.GetComponent<ObjectOwner>();
+            //next = ownerComponent?.Owner;
+            next = next.transform.parent?.gameObject;
         }
     }
 }

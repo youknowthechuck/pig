@@ -34,7 +34,7 @@ public class TowerBehaviorStateWaitingToFire : State
 
     bool canFire;
 
-    public TowerBehaviorStateWaitingToFire(float BAT)
+    public void Init(float BAT)
     {
         baseAttackTime = BAT;
     }
@@ -68,13 +68,13 @@ public class TowerBehaviorStateWaitingToFire : State
 
 public class TowerBehaviorStateAquireTarget : State
 {
-    TargetingBehavior targetingBehavior;
+    public TargetingBehavior targetingBehavior;
 
     float range;
 
     TargetBase target;
 
-    public TowerBehaviorStateAquireTarget(TargetingBehavior targeting, float r)
+    public void Init(TargetingBehavior targeting, float r)
     {
         targetingBehavior = targeting;
         range = r;
@@ -107,14 +107,17 @@ public class TowerBehaviorStateFireProjectile : State
 
     Transform projectileOrigin;
 
+    GameObject tower;
+
     TargetBase target;
 
     bool fired = false;
 
-    public TowerBehaviorStateFireProjectile(ProjectileBase prefab, Transform origin)
+    public void Init(ProjectileBase prefab, Transform origin, GameObject parent)
     {
         projectilePrefab = prefab;
         projectileOrigin = origin;
+        tower = parent;
     }
 
     public override void Enter(object[] input)
@@ -132,9 +135,13 @@ public class TowerBehaviorStateFireProjectile : State
     {
         if (target != null)
         {
-            ProjectileBase projectile = GameObject.Instantiate<ProjectileBase>(projectilePrefab, projectileOrigin.position, Quaternion.identity);
-            projectile.SetTarget(target.gameObject);
-            //todo: projectile targeting
+            ProjectileBase projectile = Object.Instantiate(projectilePrefab.gameObject, projectileOrigin.position, Quaternion.identity, projectileOrigin.transform).GetComponent<ProjectileBase>();
+            projectile.transform.localScale = projectilePrefab.gameObject.transform.localScale;
+
+
+            ProjectileLifetimeStateMachine sm = projectile.GetComponent<ProjectileLifetimeStateMachine>();
+            sm.SetTarget(target.gameObject);
+
         }
         //we tried our best
         fired = true;
@@ -166,18 +173,41 @@ public class TowerBehaviorStateMachine : PigScript
 {
     private StateMachine m_internalStateMachine;
 
+    private TargetingBehavior[] m_targetingBehaviors;
+    private int m_activeTargetingBehavior = 0;
+
+    public int NumTargetingBehaviors
+    {
+        get { return m_targetingBehaviors.Length; }
+    }
+    public int ActiveTargetingBehaviorIndex
+    {
+        get { return m_activeTargetingBehavior; }
+    }
+
+    public TargetingBehavior GetTargetingBehavior(int index)
+    {
+        Debug.Assert(index >= 0 && index < m_targetingBehaviors.Length);
+        return m_targetingBehaviors[index];
+    }
+
     void Awake()
     {
         TowerBase parent = gameObject.GetComponent<TowerBase>();
+
+        m_targetingBehaviors = parent.GetComponents<TargetingBehavior>();
 
         if (parent != null)
         {
             m_internalStateMachine = new StateMachine();
 
-            TowerBehaviorStatePlacement placementState = new TowerBehaviorStatePlacement();
-            TowerBehaviorStateWaitingToFire waitState = new TowerBehaviorStateWaitingToFire(parent.BaseAttackTime);
-            TowerBehaviorStateAquireTarget targetState = new TowerBehaviorStateAquireTarget(parent.GetComponent<TargetingBehavior>(), parent.Range);
-            TowerBehaviorStateFireProjectile fireState = new TowerBehaviorStateFireProjectile(parent.ProjectileClass, parent.m_projectileOrigin);
+            TowerBehaviorStatePlacement placementState = gameObject.AddComponent<TowerBehaviorStatePlacement>();
+            TowerBehaviorStateWaitingToFire waitState = gameObject.AddComponent<TowerBehaviorStateWaitingToFire>();
+            waitState.Init(parent.BaseAttackTime);
+            TowerBehaviorStateAquireTarget targetState = gameObject.AddComponent<TowerBehaviorStateAquireTarget>();
+            targetState.Init(m_targetingBehaviors[m_activeTargetingBehavior], parent.Range);
+            TowerBehaviorStateFireProjectile fireState = gameObject.AddComponent<TowerBehaviorStateFireProjectile>();
+            fireState.Init(parent.ProjectileClass, parent.m_projectileOrigin, gameObject);
 
             m_internalStateMachine.AddState(placementState);
             m_internalStateMachine.AddState(waitState);
@@ -201,6 +231,14 @@ public class TowerBehaviorStateMachine : PigScript
     void Update()
     {
         m_internalStateMachine?.Tick();
+    }
+
+    public void SetTargetingBehavior(int index)
+    {
+        Debug.Assert(index >= 0 && index < m_targetingBehaviors.Length);
+        m_activeTargetingBehavior = index;
+
+        m_internalStateMachine.GetState<TowerBehaviorStateAquireTarget>().targetingBehavior = m_targetingBehaviors[m_activeTargetingBehavior];
     }
 
     [AutoRegisterEvent]

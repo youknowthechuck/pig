@@ -12,7 +12,6 @@ public class TowerBuilderMode : PigScript
     private GameObject m_towerPrefab = null;
     private GameObject m_previewInstance = null;
     private bool m_isTowerBuilderEnabled = false;
-
     public GameObject TowerPrefab
     {
         get { return m_towerPrefab; }
@@ -85,7 +84,8 @@ public class TowerBuilderMode : PigScript
             return;
         }
 
-        if(m_towerPrefab && !m_previewInstance)
+
+        if (m_towerPrefab && !m_previewInstance)
         {
             CreatePreviewInstance();
         }
@@ -106,12 +106,24 @@ public class TowerBuilderMode : PigScript
         // Wow this is stupid and hacky who would ever hard code a mouse input directly in code???
         if(Input.GetMouseButtonDown(0) && ValidateTowerPosition())
         {
-            GameObject placedObject = Instantiate(m_towerPrefab, hit.point, Quaternion.identity);
+            //GameObject placedObject = Instantiate(m_towerPrefab, hit.point, Quaternion.identity);
+            //jank
+            GameObject player = GameObject.Find("Player");
+            GameObject placedObject = Instantiate(m_towerPrefab, hit.point, Quaternion.identity, player.transform);//GlobalUtil.InstantiateWithOwner(m_towerPrefab, hit.point, Quaternion.identity, player );
+
+            //this is a shitty hack to stop the placer prefab from flying into space..
+            placedObject.GetComponent<CapsuleCollider>().enabled = true;
 
             TowerPlacedEvent e = new TowerPlacedEvent();
+            e.Tower = placedObject;
 
             EventCore.SendTo<TowerPlacedEvent>(this, placedObject, e);
 
+            DisableBuilderMode();
+        }
+        //hack, config this
+        else if (Input.GetMouseButtonDown(1))
+        {
             DisableBuilderMode();
         }
     }

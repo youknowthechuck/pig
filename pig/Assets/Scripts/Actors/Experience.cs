@@ -2,8 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TargetingBehavior : MonoBehaviour
+public class Experience : PigScript
 {
+    [SerializeField]
+    int m_ammount = 0;
+
+    public int Ammount
+    {
+        get { return m_ammount; }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -14,11 +22,5 @@ public class TargetingBehavior : MonoBehaviour
     void Update()
     {
         
-    }
-
-    public virtual TargetBase FindTarget(float searchRadius)
-    {
-        //default implementation, you get nothing good day sir
-        return null;
     }
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PathFollower : MonoBehaviour
+public class PathFollower : PigScript
 {
     private float m_t;
 
@@ -13,9 +13,15 @@ public class PathFollower : MonoBehaviour
     [SerializeField]
     private PathObject m_path;
 
-    public float PathRatio
+    public float LifeTime
     {
         get { return m_t; }
+    }
+
+    //[0,1] representing percentage of path traveled
+    public float LifeTimeNormalized
+    {
+        get { return PathTime(m_t); }
     }
 
     public float Speed
@@ -36,19 +42,39 @@ public class PathFollower : MonoBehaviour
 
     void Update()
     {
+        m_t += Time.deltaTime;
+
+        transform.position = EvalPosition(m_t);
+        transform.forward = EvalForward(m_t);
+
+        //@todo: move destroy logic somewhere to do more heavy lifting when there is HP or whatever
+        if (PathTime(m_t) >= 1.0f)
+        {
+            FinishTrip();
+        }
+    }
+
+    float PathTime(float worldTime)
+    {
         //this can be precomputed...
         float travelTimeSeconds = m_path.Length / m_speed;
 
-        float timeStep = Time.deltaTime / travelTimeSeconds;
+        float life = worldTime / travelTimeSeconds;
 
-        //this can be computed once per segment...
-        m_t += timeStep;
+        return life;
+    }
 
-        int startNodeIndex = GetSegmentStartNodeIndex(m_t, m_path.Nodes);
+    //exposed for prediction
+    public Vector3 EvalPosition(float t)
+    {
+        float pathTime = PathTime(t);
+
+        int startNodeIndex = GetSegmentStartNodeIndex(pathTime, m_path.Nodes);
 
         PathNode startNode = Path.Nodes[startNodeIndex];
 
-        float localTime = startNode.GetLocalTime(m_t, m_path.Length);
+        float segmentTime = startNode.GetLocalTime(pathTime, m_path.Length);
+
         Vector3 position = transform.position;
 
         if (startNode.m_interpFlags == ENodeInterpolation.interp_cubic)
@@ -62,37 +88,58 @@ public class PathFollower : MonoBehaviour
                                                             startNode.m_transform.position,
                                                             m_path.Nodes[nextIndex].m_transform.position,
                                                             m_path.Nodes[nextNextIndex].m_transform.position,
-                                                            localTime,
+                                                            segmentTime,
                                                             0,
                                                             0);
-
-            Vector3 tangent = CubicInterpUtils.Eval_Tangent_Hermite(m_path.Nodes[prevIndex].m_transform.position,
-                                                            startNode.m_transform.position,
-                                                            m_path.Nodes[nextIndex].m_transform.position,
-                                                            m_path.Nodes[nextNextIndex].m_transform.position,
-                                                            localTime,
-                                                            0,
-                                                            0);
-
-            gameObject.transform.forward = tangent.normalized;
         }
         else if (startNode.m_interpFlags == ENodeInterpolation.interp_linear)
         {
             int nextIndex = Math.Min(startNodeIndex + 1, Path.Nodes.Count - 1);
             PathNode nextNode = m_path.Nodes[nextIndex];
             Vector3 line = nextNode.m_transform.position - startNode.m_transform.position;
-            position = startNode.m_transform.position + line * localTime;
-
-            gameObject.transform.forward = line.normalized;
+            position = startNode.m_transform.position + line * segmentTime;
         }
 
-        transform.position = position;
+        return position;
+    }
 
-        //@todo: move destroy logic somewhere to do more heavy lifting when there is HP or whatever
-        if (m_t >= 1.0f)
+    public Vector3 EvalForward(float t)
+    {
+        float pathTime = PathTime(t);
+
+        int startNodeIndex = GetSegmentStartNodeIndex(pathTime, m_path.Nodes);
+
+        PathNode startNode = Path.Nodes[startNodeIndex];
+
+        float segmentTime = startNode.GetLocalTime(pathTime, m_path.Length);
+
+        Vector3 forward = transform.forward;
+
+        if (startNode.m_interpFlags == ENodeInterpolation.interp_cubic)
         {
-            FinishTrip();
+            //this shit sucks move the next node/previous node logic into the path
+            int prevIndex = Math.Max(startNodeIndex - 1, 0);
+            int nextIndex = Math.Min(startNodeIndex + 1, Path.Nodes.Count - 1);
+            int nextNextIndex = Math.Min(nextIndex + 1, Path.Nodes.Count - 1);
+
+            forward = CubicInterpUtils.Eval_Tangent_Hermite(m_path.Nodes[prevIndex].m_transform.position,
+                                                            startNode.m_transform.position,
+                                                            m_path.Nodes[nextIndex].m_transform.position,
+                                                            m_path.Nodes[nextNextIndex].m_transform.position,
+                                                            segmentTime,
+                                                            0,
+                                                            0);
         }
+        else if (startNode.m_interpFlags == ENodeInterpolation.interp_linear)
+        {
+            int nextIndex = Math.Min(startNodeIndex + 1, Path.Nodes.Count - 1);
+            PathNode nextNode = m_path.Nodes[nextIndex];
+            Vector3 line = nextNode.m_transform.position - startNode.m_transform.position;
+
+            forward = line.normalized;
+        }
+
+        return forward;
     }
 
     int GetSegmentStartNodeIndex(float t, List<PathNode> nodes)

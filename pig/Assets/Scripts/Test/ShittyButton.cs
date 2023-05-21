@@ -10,7 +10,14 @@ public class ShittyButton : MonoBehaviour
     public GameObject towerPrefab;
     public KeyCode hotkey;
 
+    public Color activeColor;
+    public Color disabledColor;
+
     private TowerBuilderMode m_builder = null;
+
+    private Bank m_bank = null;
+
+    private bool m_enabled = false;
 
     // Start is called before the first frame update
     void Start()
@@ -18,10 +25,17 @@ public class ShittyButton : MonoBehaviour
         bigBoy.onClick.AddListener(ButtonPressed);
 
         m_builder = FindObjectOfType<TowerBuilderMode>();
+
+        m_bank = FindObjectOfType<Bank>();
     }
 
     private void Update()
     {
+        m_enabled = m_bank.Vault.CanAfford(towerPrefab.GetComponent<Currency>().Ammount);
+
+        Image f = GetComponent<Image>();
+        f.color = m_enabled ? activeColor : disabledColor;
+
         if (Input.GetKeyDown(hotkey))
         {
             ButtonPressed();
@@ -30,9 +44,11 @@ public class ShittyButton : MonoBehaviour
 
     void ButtonPressed()
     {
-        TowerBuilderMode builder = FindObjectOfType<TowerBuilderMode>();
-        builder.AssignTowerPrefab(towerPrefab);
+        if (m_enabled)
+        {
+            m_builder.AssignTowerPrefab(towerPrefab);
 
-        FindObjectOfType<TowerBuilderMode>().EnableBuilderMode();
+            m_builder.EnableBuilderMode();
+        }
     }
 }

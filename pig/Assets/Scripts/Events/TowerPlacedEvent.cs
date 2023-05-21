@@ -4,4 +4,5 @@ using UnityEngine;
 
 public class TowerPlacedEvent : EventBase
 {
+    public GameObject Tower;
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class PathObject : MonoBehaviour
+public class PathObject : PigScript
 {
     [SerializeField]
     private List<PathNode> m_nodes = new List<PathNode>();
