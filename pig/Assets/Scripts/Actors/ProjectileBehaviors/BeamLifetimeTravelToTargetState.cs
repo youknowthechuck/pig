@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class BeamLifetimeTravelToTargetState : ProjectileLifetimeTravelToTarget
 {
-    //default implementation - move towards target location in r3
-    private Vector3 m_direction;
-
     void OnTriggerEnter(Collider other)
     {
         m_hitTarget = other.gameObject.GetComponent<TargetBase>();

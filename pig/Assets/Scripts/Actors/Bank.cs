@@ -25,6 +25,8 @@ public class Bank : PigScript
         m_currency = gameObject.AddComponent<Currency>();
 
         m_currency.Award(m_startingBalance);
+
+        DebugRegistry.Invoke("AddCurrency 20");
     }
 
     // Update is called once per frame
@@ -33,5 +35,9 @@ public class Bank : PigScript
         m_Display.text = m_currency?.Ammount.ToString();
     }
 
-
+    [DebugCommand]
+    public void AddCurrency(int ammount)
+    {
+        m_currency.Award(ammount);
+    }
 }
