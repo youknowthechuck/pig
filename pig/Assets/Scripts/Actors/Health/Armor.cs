@@ -6,8 +6,18 @@ using UnityEngine;
 //armor reduces incoming damage as it is applied, unless the damage type fully damages armor
 public class Armor : DamagedBehavior
 {
-    // Start is called before the first frame update
+    private void Awake()
+    {
+        if (m_healthBarUI != null)
+        {
+            m_healthBarUI.material.SetColor(m_shaderNameFillColor, new Color(0.5f, 0.5f, 0.5f));
+            m_healthBarUI.material.SetFloat(m_shaderNameSegmentLength, 1.0f);
+            m_healthBarUI.material.SetFloat(m_shaderNameHealthPool, m_baseHealth);
+        }
 
+    }
+
+    // Start is called before the first frame update
     void Start()
     {
         //double the armor base health pool, effectively halving incoming damage
@@ -17,12 +27,6 @@ public class Armor : DamagedBehavior
     public Armor()
     {
         m_hpType = EHealthPool.HP_Armor;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public override int TakeDamage(DamageInstance damageInstance)

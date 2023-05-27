@@ -16,8 +16,40 @@ class DebugRegistry : SingletonClass<DebugRegistry>
 {
     private Dictionary<string, DebugCommandData> commandMethods = new Dictionary<string, DebugCommandData>();
 
-    private Dictionary<Type, List<object>> commandListeners = new Dictionary<Type, List<object>>();
+    private Dictionary<Type, List<UnityEngine.Object>> commandListeners = new Dictionary<Type, List<UnityEngine.Object>>();
 
+    public static List<DebugCommandData> GetMatchingMethods(string name)
+    {
+        List<DebugCommandData> matches = new List<DebugCommandData>();
+
+        foreach (var method in Instance.commandMethods)
+        {
+            if (method.Key.ToLower().StartsWith(name))
+            {
+                matches.Add(method.Value);
+            }
+        }
+
+        return matches;
+    }
+
+
+    public static List<UnityEngine.Object> GetMatchingListeners(string name)
+    {
+        List<UnityEngine.Object> matches = new List<UnityEngine.Object>();
+
+        foreach (var listenerList in Instance.commandListeners)
+        {
+            foreach (UnityEngine.Object listener in listenerList.Value)
+            {
+                if (listener.name.ToLower().StartsWith(name))
+                {
+                    matches.Add(listener);
+                }
+            }
+        }
+        return matches;
+    }
 
     public void GenerateFullDebugCommandRegistry()
     {
@@ -27,33 +59,30 @@ class DebugRegistry : SingletonClass<DebugRegistry>
         }
     }
 
-    public static void RegisterListener(object listener)
+    public static void RegisterListener(UnityEngine.Object listener)
     {
         Type listenerType = listener.GetType();
 
-        List<object> registerd;
-        if (!Instance.commandListeners.TryGetValue(listenerType, out registerd))
+        List<UnityEngine.Object> registerd;
+        if (Instance.commandListeners.TryGetValue(listenerType, out registerd))
         {
-            registerd = new List<object>();
+            registerd.Add(listener);
         }
-
-        registerd.Add(listener);
-        Instance.commandListeners[listenerType] = registerd;
     }
-    public static void UnregisterListener(object listener)
+
+    public static void UnregisterListener(UnityEngine.Object listener)
     {
         Type listenerType = listener.GetType();
 
-        List<object> registerd;
-        if (!Instance.commandListeners.TryGetValue(listenerType, out registerd))
+        List<UnityEngine.Object> registerd;
+        if (Instance.commandListeners.TryGetValue(listenerType, out registerd))
         {
-            Debug.LogError(String.Format("Object of type {0} trying to unregister but none were found.", listenerType.ToString()));
+            if (!registerd.Remove(listener))
+            {
+                Debug.LogError(String.Format("Object {0} trying to unregister but was not in list.", listener.ToString()));
+            }
+            Instance.commandListeners[listenerType] = registerd;
         }
-        else if (!registerd.Remove(listener))
-        {
-            Debug.LogError(String.Format("Object {0} trying to unregister but was not in list.", listener.ToString()));
-        }
-        Instance.commandListeners[listenerType] = registerd;
     }
 
     public static void Invoke(string commandLine)
@@ -67,7 +96,7 @@ class DebugRegistry : SingletonClass<DebugRegistry>
         DebugCommandData data;
         if (commandMethods.TryGetValue(args[0], out data))
         {
-            List<object> listeners;
+            List<UnityEngine.Object> listeners;
             if (commandListeners.TryGetValue(data.type, out listeners))
             {
                 object[] methodParams;
@@ -141,6 +170,11 @@ class DebugRegistry : SingletonClass<DebugRegistry>
                 commandData.methodInfo = mi;
 
                 commandMethods.Add(mi.Name, commandData);
+
+                if (!commandListeners.ContainsKey(behaviourType))
+                {
+                    commandListeners.Add(behaviourType, new List<UnityEngine.Object>());
+                }
             }
         }
     }

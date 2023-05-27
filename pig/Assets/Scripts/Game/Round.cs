@@ -55,6 +55,8 @@ public class Round : PigScript
 
     public void Begin()
     {
+        m_pendingSpawns.Clear();
+
         foreach (SpawnParams spawnParams in m_spawns)
         {
             foreach (WaveDefinition wave in spawnParams.Waves)

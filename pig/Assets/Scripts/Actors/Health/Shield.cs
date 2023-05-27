@@ -11,12 +11,6 @@ public class Shield : DamagedBehavior
         m_hpType = EHealthPool.HP_Shield;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public override int TakeDamage(DamageInstance damageInstance)
     {
         int damageApplied = 0;

@@ -49,4 +49,10 @@ public class Director : PigScript
         //invalid rounds are done, i guess (we rely on this to begin round 0 since we start at round -1)
         return true;
     }
+
+    [DebugCommand]
+    public void SkipToRound(int round)
+    {
+        m_currentRound = round;
+    }
 }
