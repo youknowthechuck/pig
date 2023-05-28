@@ -5,7 +5,11 @@ using UnityEngine.UI;
 
 public class DebugConsole : PigScript
 {
-    bool m_enabled;
+    //this is some shit, we can only have one of these in the world
+    //and check this shit to block inputs to buttons or whatever
+    public static bool Active = false;
+
+    string m_lastGeneratedString = "";
 
     InputField m_inputField;
 
@@ -13,11 +17,14 @@ public class DebugConsole : PigScript
     VerticalLayoutGroup m_autoCompleteContentLayout;
 
     [SerializeField]
-    Text m_autoCompleteDefaultLabel;
+    AutoCompleteEntry m_autoCompleteEntryTemplate;
 
-    List<Text> m_autoCompleteLabels = new List<Text>();
+    List<AutoCompleteEntry> m_autoCompleteEntries = new List<AutoCompleteEntry>();
 
-    List<string> m_autoCompleteOptions = new List<string>();
+    List<string> m_commandHistory = new List<string>();
+
+    private int m_selectedEntry = 0;
+    private int m_selectedHistory = 0;
 
     private void Awake()
     {
@@ -40,48 +47,118 @@ public class DebugConsole : PigScript
         {
             Toggle();
         }
-        else if (m_enabled && Input.anyKey)
+        else if (Input.GetKeyDown(KeyCode.Tab))
         {
-            string command = m_inputField.text;
-            GenerateAutoCompletes(command.Trim().ToLower());
+            FillAutoComplete();
+        }
+        else if (Input.GetKeyDown(KeyCode.Return))
+        {
+            ExecuteCommand();
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            SelectNext();
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            SelectPrevious();
+        }
+        else if (Active && Input.anyKey)
+        {
+            string command = m_inputField.text.Trim().ToLower();
+            if (command != m_lastGeneratedString)
+            {
+                m_lastGeneratedString = command;
+                GenerateAutoCompletes(m_lastGeneratedString);
+            }
+        }
+    }
+
+    void FillAutoComplete()
+    {
+        m_inputField.text = m_autoCompleteEntries[m_selectedEntry].EntryText;
+        m_inputField.MoveTextEnd(false);
+    }
+
+    void ExecuteCommand()
+    {
+        DebugRegistry.Invoke(m_inputField.text);
+
+        m_commandHistory.Add(m_inputField.text);
+
+        m_inputField.text = "";
+        m_lastGeneratedString = "";
+        GenerateAutoCompletes(m_lastGeneratedString);
+        m_selectedHistory = 0;
+    }
+
+    void SelectNext()
+    {
+        if (m_autoCompleteEntries.Count > 0)
+        {
+            m_autoCompleteEntries[m_selectedEntry].SetHighlighted(false);
+            m_selectedEntry = (m_selectedEntry + 1) % m_autoCompleteEntries.Count;
+            m_autoCompleteEntries[m_selectedEntry].SetHighlighted(true);
+        }
+    }
+
+    void SelectPrevious()
+    {
+        if (m_autoCompleteEntries.Count > 0)
+        {
+            m_autoCompleteEntries[m_selectedEntry].SetHighlighted(false);
+            m_selectedEntry = m_selectedEntry - 1;
+            if (m_selectedEntry < 0)
+            {
+                m_selectedEntry = m_autoCompleteEntries.Count - 1;
+            }
+            m_autoCompleteEntries[m_selectedEntry].SetHighlighted(true);
         }
     }
 
     void GenerateAutoCompletes(string input)
     {
-        m_autoCompleteOptions.Clear();
+        m_selectedEntry = 0;
 
         List<UnityEngine.Object> autoCompleteObjects = DebugRegistry.GetMatchingListeners(input);
         List<DebugCommandData> autoCompleteMethods = DebugRegistry.GetMatchingMethods(input);
 
+        List<string> options = new List<string>();
+
         foreach (UnityEngine.Object listener in autoCompleteObjects)
         {
-            m_autoCompleteOptions.Add(listener.name);
+            options.Add(listener.name);
         }
         foreach (DebugCommandData method in autoCompleteMethods)
         {
-            m_autoCompleteOptions.Add(method.methodInfo.Name);
+            options.Add(method.methodInfo.Name);
         }
 
-        foreach (Text label in m_autoCompleteLabels)
+        foreach (var entry in m_autoCompleteEntries)
         {
-            GameObject.Destroy(label.gameObject);
+            GameObject.Destroy(entry.gameObject);
         }
 
-        m_autoCompleteLabels.Clear();
+        m_autoCompleteEntries.Clear();
 
-        foreach (string option in m_autoCompleteOptions)
+        foreach (string option in options)
         {
-            Text label = Instantiate<Text>(m_autoCompleteDefaultLabel, m_autoCompleteContentLayout.transform);
-            label.text = option;
-            label.gameObject.SetActive(true);
-            m_autoCompleteLabels.Add(label);
+            AutoCompleteEntry entry = Instantiate<AutoCompleteEntry>(m_autoCompleteEntryTemplate, m_autoCompleteContentLayout.transform);
+            entry.gameObject.SetActive(true);
+            entry.SetText(option);
+            entry.SetHighlighted(false);
+            m_autoCompleteEntries.Add(entry);
+        }
+
+        if (m_autoCompleteEntries.Count > 0)
+        {
+            m_autoCompleteEntries[m_selectedEntry].SetHighlighted(true);
         }
     }
 
     void Toggle()
     {
-        if (m_enabled)
+        if (Active)
         {
             Hide();
         }
@@ -93,11 +170,12 @@ public class DebugConsole : PigScript
 
     void Hide()
     {
+        m_inputField.text.TrimEnd('`');
         m_inputField?.DeactivateInputField();
 
         gameObject.GetComponentInChildren<Canvas>().enabled = false;
 
-        m_enabled = false;
+        Active = false;
     }
 
     void Show()
@@ -106,6 +184,9 @@ public class DebugConsole : PigScript
 
         m_inputField?.ActivateInputField();
 
-        m_enabled = true;
+        m_lastGeneratedString = m_inputField.text;
+        GenerateAutoCompletes(m_lastGeneratedString);
+
+        Active = true;
     }
 }

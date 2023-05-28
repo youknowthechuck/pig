@@ -36,7 +36,8 @@ public class ShittyButton : MonoBehaviour
         Image f = GetComponent<Image>();
         f.color = m_enabled ? activeColor : disabledColor;
 
-        if (Input.GetKeyDown(hotkey))
+        //debug console shitty hack
+        if (Input.GetKeyDown(hotkey) && !DebugConsole.Active)
         {
             ButtonPressed();
         }
