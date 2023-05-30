@@ -60,6 +60,7 @@ public class TowerBuilderMode : PigScript
         }
 
         m_previewInstance = Instantiate(m_towerPrefab);
+        m_previewInstance.GetComponent<Collider>().enabled = false;
     }
 
     public void PositionPreviewAt(Vector3 position, Quaternion rotation)
@@ -112,7 +113,7 @@ public class TowerBuilderMode : PigScript
             GameObject placedObject = Instantiate(m_towerPrefab, hit.point, Quaternion.identity, player.transform);//GlobalUtil.InstantiateWithOwner(m_towerPrefab, hit.point, Quaternion.identity, player );
 
             //this is a shitty hack to stop the placer prefab from flying into space..
-            placedObject.GetComponent<CapsuleCollider>().enabled = true;
+            placedObject.GetComponent<Collider>().enabled = true;
 
             TowerPlacedEvent e = new TowerPlacedEvent();
             e.Tower = placedObject;
