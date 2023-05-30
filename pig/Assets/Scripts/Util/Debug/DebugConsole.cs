@@ -58,6 +58,10 @@ public class DebugConsole : PigScript
         {
             Toggle();
         }
+        else if (Input.GetKeyDown(KeyCode.Escape) && Active)
+        {
+            Toggle();
+        }
         else if (Input.GetKeyDown(KeyCode.Tab))
         {
             FillAutoComplete();
