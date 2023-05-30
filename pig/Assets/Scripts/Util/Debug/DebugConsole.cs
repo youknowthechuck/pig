@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+//commands can be invoked either with "command [args]" or "object.command [args]"
+//invoking a command without a target object will send the command to all registered listeners for that command
 public class DebugConsole : PigScript
 {
     //this is some shit, we can only have one of these in the world
@@ -10,6 +13,14 @@ public class DebugConsole : PigScript
     public static bool Active = false;
 
     string m_lastGeneratedString = "";
+
+    string m_objectNameParse = "";
+    UnityEngine.Object m_objectParse = null;
+    string m_commandParse = "";
+    List<string> m_argsParse = new List<string>();
+
+    bool m_objectComplete = false;
+    bool m_commandComplete = false;
 
     InputField m_inputField;
 
@@ -66,6 +77,8 @@ public class DebugConsole : PigScript
         else if (Active && Input.anyKey)
         {
             string command = m_inputField.text.Trim().ToLower();
+            ParseInput(command);
+
             if (command != m_lastGeneratedString)
             {
                 m_lastGeneratedString = command;
@@ -74,22 +87,49 @@ public class DebugConsole : PigScript
         }
     }
 
+    void ParseInput(string input)
+    {
+        m_objectNameParse = input;
+        m_commandParse = "";
+        m_argsParse.Clear();
+
+        string[] splitOnObj = input.Split('.');
+        m_objectComplete = splitOnObj.Length > 1;
+
+        string rest = input;
+
+        if (splitOnObj.Length > 1)
+        {
+            m_objectNameParse = splitOnObj[0];
+            rest = splitOnObj[1];
+            //ignore the rest we shouldn't have two or more '.'s
+        }
+
+        string[] args = rest.Split(' ');
+        m_commandComplete = args.Length > 1;
+
+        m_commandParse = args[0];
+
+        m_argsParse = args.Skip(1).ToList();
+    }
+
+
     void FillAutoComplete()
     {
-        m_inputField.text = m_autoCompleteEntries[m_selectedEntry].EntryText;
+        string[] splitEntry = m_autoCompleteEntries[m_selectedEntry].EntryText.Split(' ');
+
+        m_inputField.text = m_objectComplete ? m_objectNameParse + '.' : "";
+        m_inputField.text += splitEntry[0];
         m_inputField.MoveTextEnd(false);
     }
 
     void ExecuteCommand()
     {
-        DebugRegistry.Invoke(m_inputField.text);
+        DebugRegistry.Invoke(m_commandParse, m_argsParse.ToArray(), m_objectParse);
 
         m_commandHistory.Add(m_inputField.text);
 
-        m_inputField.text = "";
-        m_lastGeneratedString = "";
-        GenerateAutoCompletes(m_lastGeneratedString);
-        m_selectedHistory = 0;
+        ClearInput();
     }
 
     void SelectNext()
@@ -120,18 +160,32 @@ public class DebugConsole : PigScript
     {
         m_selectedEntry = 0;
 
-        List<UnityEngine.Object> autoCompleteObjects = DebugRegistry.GetMatchingListeners(input);
-        List<DebugCommandData> autoCompleteMethods = DebugRegistry.GetMatchingMethods(input);
+        List<UnityEngine.Object> autoCompleteObjects = null;
+        autoCompleteObjects = DebugRegistry.GetMatchingListeners(m_objectNameParse);
+        m_objectParse = autoCompleteObjects.Count > 0 ? autoCompleteObjects[0] : null;
+        List<DebugCommandData> autoCompleteMethods = null;
+
+        if (m_objectComplete)
+        {
+            autoCompleteMethods = DebugRegistry.GetMatchingMethodsForObject(m_commandParse, m_objectParse);
+        }
+        else
+        {
+            autoCompleteMethods = DebugRegistry.GetMatchingMethods(m_commandParse);
+        }
 
         List<string> options = new List<string>();
 
-        foreach (UnityEngine.Object listener in autoCompleteObjects)
+        if (!m_objectComplete && !m_commandComplete)
         {
-            options.Add(listener.name);
+            foreach (UnityEngine.Object listener in autoCompleteObjects)
+            {
+                options.Add(listener.name);
+            }
         }
         foreach (DebugCommandData method in autoCompleteMethods)
         {
-            options.Add(method.methodInfo.Name);
+            options.Add(DescribeCommand(method));
         }
 
         foreach (var entry in m_autoCompleteEntries)
@@ -154,6 +208,27 @@ public class DebugConsole : PigScript
         {
             m_autoCompleteEntries[m_selectedEntry].SetHighlighted(true);
         }
+    }
+
+    string DescribeCommand(DebugCommandData data)
+    {
+        string commandString = data.methodInfo.Name;
+        foreach (var param in data.methodInfo.GetParameters())
+        {
+            commandString += string.Format(" <{0} {1}>", param.ParameterType.Name, param.Name);
+        }
+
+        return commandString;
+    }
+
+    void ClearInput()
+    {
+        m_inputField.text = "";
+        m_lastGeneratedString = "";
+        m_selectedHistory = 0;
+
+        ParseInput("");
+        GenerateAutoCompletes("");
     }
 
     void Toggle()

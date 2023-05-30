@@ -31,7 +31,7 @@ public class ShittyButton : MonoBehaviour
 
     private void Update()
     {
-        m_enabled = m_bank.Vault.CanAfford(towerPrefab.GetComponent<Currency>().Ammount);
+        m_enabled = m_bank.Vault.CanAfford(towerPrefab.GetComponent<Currency>().Amount);
 
         Image f = GetComponent<Image>();
         f.color = m_enabled ? activeColor : disabledColor;

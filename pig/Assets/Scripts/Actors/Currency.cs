@@ -6,11 +6,11 @@ using UnityEngine.Assertions;
 public class Currency : PigScript
 {
     [SerializeField]
-    int m_ammount = 0;
+    int m_amount = 0;
 
-    public int Ammount
+    public int Amount
     {
-        get { return m_ammount; }
+        get { return m_amount; }
     }
 
     // Start is called before the first frame update
@@ -25,22 +25,22 @@ public class Currency : PigScript
         
     }
 
-    public void Award(int ammount)
+    public void Award(int amount)
     {
-        m_ammount += ammount;
+        m_amount += amount;
     }
 
     public bool CanAfford(int cost)
     {
-        return cost <= m_ammount;
+        return cost <= m_amount;
     }
 
     public bool Spend(int cost)
     {
         Assert.IsTrue(CanAfford(cost));
 
-        m_ammount -= cost;
+        m_amount -= cost;
 
-        return m_ammount >= 0;
+        return m_amount >= 0;
     }
 }

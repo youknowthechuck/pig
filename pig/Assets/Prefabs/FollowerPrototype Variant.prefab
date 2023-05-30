@@ -140,6 +140,10 @@ PrefabInstance:
       value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 5799520778724672845, guid: 377d1c1b5dc9e9d4c8c07c52696a5d86, type: 3}
+      propertyPath: m_amount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5799520778724672845, guid: 377d1c1b5dc9e9d4c8c07c52696a5d86, type: 3}
       propertyPath: m_ammount
       value: 5
       objectReference: {fileID: 0}
@@ -174,16 +178,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2172648707129821640, guid: 377d1c1b5dc9e9d4c8c07c52696a5d86, type: 3}
   m_PrefabInstance: {fileID: 4109979495673120139}
   m_PrefabAsset: {fileID: 0}
---- !u!23 &9138753633199803101 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 5177719629469126486, guid: 377d1c1b5dc9e9d4c8c07c52696a5d86, type: 3}
-  m_PrefabInstance: {fileID: 4109979495673120139}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &4784826263608690773 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8894198810606521822, guid: 377d1c1b5dc9e9d4c8c07c52696a5d86, type: 3}
-  m_PrefabInstance: {fileID: 4109979495673120139}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2180301101139573292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,3 +192,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_healthBarUI: {fileID: 4784826263608690773}
   m_baseHealth: 1
+--- !u!23 &4784826263608690773 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8894198810606521822, guid: 377d1c1b5dc9e9d4c8c07c52696a5d86, type: 3}
+  m_PrefabInstance: {fileID: 4109979495673120139}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &9138753633199803101 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5177719629469126486, guid: 377d1c1b5dc9e9d4c8c07c52696a5d86, type: 3}
+  m_PrefabInstance: {fileID: 4109979495673120139}
+  m_PrefabAsset: {fileID: 0}

@@ -33,6 +33,31 @@ class DebugRegistry : SingletonClass<DebugRegistry>
         return matches;
     }
 
+    public static List<DebugCommandData> GetMatchingMethodsForObject(string name, UnityEngine.Object obj)
+    {
+        List<DebugCommandData> outData = new List<DebugCommandData>();
+
+        Type objType = obj.GetType();
+
+        if (Instance.commandListeners.ContainsKey(objType))
+        {
+            //lol
+            foreach (var command in Instance.commandMethods)
+            {
+                DebugCommandData data = command.Value;
+                if (data.type == objType)
+                {
+                    outData.Add(data);
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError(String.Format("No debug commands for listener type {0}.", objType.ToString()));
+        }
+
+        return outData;
+    }
 
     public static List<UnityEngine.Object> GetMatchingListeners(string name)
     {
@@ -50,6 +75,7 @@ class DebugRegistry : SingletonClass<DebugRegistry>
         }
         return matches;
     }
+
 
     public void GenerateFullDebugCommandRegistry()
     {
@@ -85,37 +111,43 @@ class DebugRegistry : SingletonClass<DebugRegistry>
         }
     }
 
-    public static void Invoke(string commandLine)
+    public static void Invoke(string command, string[] args, UnityEngine.Object optObject = null)
     {
-        Instance.InvokeImpl(commandLine);
+        Instance.InvokeImpl(command, args, optObject);
     }
 
-    private void InvokeImpl(string commandLine)
+    private void InvokeImpl(string command, string[] args, UnityEngine.Object optObject = null)
     {
-        string[] args = commandLine.Split(' ');
         DebugCommandData data;
-        if (commandMethods.TryGetValue(args[0], out data))
+        if (commandMethods.TryGetValue(command, out data))
         {
             List<UnityEngine.Object> listeners;
             if (commandListeners.TryGetValue(data.type, out listeners))
             {
                 object[] methodParams;
-                if (ParamsFromString(args.Skip(1).ToArray(), data.methodInfo.GetParameters(), out methodParams))
+                if (ParamsFromString(args, data.methodInfo.GetParameters(), out methodParams))
                 {
-                    foreach (object listener in listeners)
+                    if (optObject != null)
                     {
-                        data.methodInfo.Invoke(listener, methodParams);
+                        data.methodInfo.Invoke(optObject, methodParams);
+                    }
+                    else
+                    {
+                        foreach (object listener in listeners)
+                        {
+                            data.methodInfo.Invoke(listener, methodParams);
+                        }
                     }
                 }
                 else
                 {
-                    Debug.LogError(String.Format("Debug command \"{0}\" was malformed", commandLine));
+                    Debug.LogError(String.Format("Debug command \"{0} {1}\" was malformed", command, args));
                 }
             }
         }
         else
         {
-            Debug.LogError(String.Format("No debug command \"{0}\" found", args[0]));
+            Debug.LogError(String.Format("No debug command \"{0}\" found", command));
         }
     }
 
@@ -154,7 +186,7 @@ class DebugRegistry : SingletonClass<DebugRegistry>
             }
 
             DebugCommandData commandData;
-            if (commandMethods.TryGetValue(mi.Name, out commandData))
+            if (commandMethods.TryGetValue(mi.Name.ToLower(), out commandData))
             {
                 string commandError = String.Format("Method {0} for type {1} already defined for type {2}",
                     mi.Name,
@@ -169,7 +201,7 @@ class DebugRegistry : SingletonClass<DebugRegistry>
                 commandData.type = behaviourType;
                 commandData.methodInfo = mi;
 
-                commandMethods.Add(mi.Name, commandData);
+                commandMethods.Add(mi.Name.ToLower(), commandData);
 
                 if (!commandListeners.ContainsKey(behaviourType))
                 {

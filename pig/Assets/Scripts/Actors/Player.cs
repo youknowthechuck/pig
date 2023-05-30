@@ -95,14 +95,14 @@ public class Player : PigScript
 
         if (reward != null)
         {
-            m_bank?.Vault?.Award(reward.Ammount);
+            m_bank?.Vault?.Award(reward.Amount);
         }
     }
 
     [AutoRegisterEvent]
     void HandleTowerPlacedEvent(TowerPlacedEvent e)
     {
-        int cost = e.Tower.GetComponent<Currency>().Ammount;
+        int cost = e.Tower.GetComponent<Currency>().Amount;
 
         m_bank.Vault.Spend(cost);
     }

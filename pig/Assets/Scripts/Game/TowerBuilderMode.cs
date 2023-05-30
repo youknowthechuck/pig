@@ -109,7 +109,7 @@ public class TowerBuilderMode : PigScript
             //GameObject placedObject = Instantiate(m_towerPrefab, hit.point, Quaternion.identity);
             //jank
             GameObject player = GameObject.Find("Player");
-            GameObject placedObject = Instantiate(m_towerPrefab, hit.point, Quaternion.identity, player.transform);//GlobalUtil.InstantiateWithOwner(m_towerPrefab, hit.point, Quaternion.identity, player );
+            GameObject placedObject = Instantiate(m_towerPrefab, hit.point, Quaternion.identity, player.transform);
 
             //this is a shitty hack to stop the placer prefab from flying into space..
             placedObject.GetComponent<CapsuleCollider>().enabled = true;
