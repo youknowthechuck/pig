@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.davidknopp.atlas": {
+      "version": "https://github.com/david-knopp/Atlas.git#ReleasePackage",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "53c9cd68dbb301fecab8522666079ecd2ba2576c"
+    },
     "com.unity.burst": {
       "version": "1.7.3",
       "depth": 1,
