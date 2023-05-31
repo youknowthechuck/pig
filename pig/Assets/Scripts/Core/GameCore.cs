@@ -13,12 +13,17 @@ public class GameCore : SingletonBehaviour<GameCore>
     void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
         SceneManager.activeSceneChanged += ActiveSceneChanged;
+
+        Debug.Log("GAME STARTED");
+        OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
     }
 
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneUnloaded -= OnSceneUnloaded;
         SceneManager.activeSceneChanged -= ActiveSceneChanged;
     }
 
@@ -30,6 +35,15 @@ public class GameCore : SingletonBehaviour<GameCore>
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("SCENE LOADED: " + scene.name + "  -  MODE:" + mode);
+
+        // Add scene statics
+        GameObject sceneStatics = new GameObject("SceneStatics");
+        sceneStatics.AddComponent<SceneStatics>();
+    }
+
+    void OnSceneUnloaded(Scene scene)
+    {
+        Debug.Log("SCENE TEARDOWN: " + scene.name);
     }
 
     void ActiveSceneChanged(Scene lastScene, Scene newScene)

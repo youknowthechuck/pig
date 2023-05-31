@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class Bank : PigScript
 {
-    [SerializeField]
     Text m_Display = null;
     
     [SerializeField]
@@ -21,9 +20,11 @@ public class Bank : PigScript
     // Start is called before the first frame update
     void Start()
     {
+        // Find and attach the display field for bank currency
+        m_Display = FindObjectOfType<BankText>().gameObject.GetComponent<Text>();
+
         //banks hold their own currency
         m_currency = gameObject.AddComponent<Currency>();
-
         m_currency.Award(m_startingBalance);
     }
 
