@@ -60,7 +60,6 @@ public class TowerBuilderMode : PigScript
         }
 
         m_previewInstance = Instantiate(m_towerPrefab);
-        m_previewInstance.GetComponent<Collider>().enabled = false;
     }
 
     public void PositionPreviewAt(Vector3 position, Quaternion rotation)
@@ -99,7 +98,9 @@ public class TowerBuilderMode : PigScript
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out hit))
+        int terrainMask = 1 << 3; //3 == ground collision layer...
+
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainMask))
         {
             PositionPreviewAt(hit.point, Quaternion.identity);
         }
@@ -107,13 +108,9 @@ public class TowerBuilderMode : PigScript
         // Wow this is stupid and hacky who would ever hard code a mouse input directly in code???
         if(Input.GetMouseButtonDown(0) && ValidateTowerPosition())
         {
-            //GameObject placedObject = Instantiate(m_towerPrefab, hit.point, Quaternion.identity);
             //jank
             GameObject player = GameObject.Find("Player");
             GameObject placedObject = Instantiate(m_towerPrefab, hit.point, Quaternion.identity, player.transform);
-
-            //this is a shitty hack to stop the placer prefab from flying into space..
-            placedObject.GetComponent<Collider>().enabled = true;
 
             TowerPlacedEvent e = new TowerPlacedEvent();
             e.Tower = placedObject;
