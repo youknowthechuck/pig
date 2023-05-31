@@ -1165,7 +1165,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0aa3252f57634e84bbcfd8b9d46f873d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Display: {fileID: 579979976}
   m_startingBalance: 10
 --- !u!1 &579979974
 GameObject:
@@ -1178,6 +1177,7 @@ GameObject:
   - component: {fileID: 579979975}
   - component: {fileID: 579979977}
   - component: {fileID: 579979976}
+  - component: {fileID: 579979978}
   m_Layer: 5
   m_Name: Currency
   m_TagString: Untagged
@@ -1247,6 +1247,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 579979974}
   m_CullTransparentMesh: 1
+--- !u!114 &579979978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 579979974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7f65bd6c588063449f9b1dce7c28e3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &584125511
 GameObject:
   m_ObjectHideFlags: 0
@@ -2790,10 +2802,10 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: "TODO:\n-debug console + commands\n  *history navigation\n-action input
     system? input polling is shit\n-new tower + projectile (ground ball?)\n-does
-    armor even work lol?\n-projectile-spawns-projectile behavior\n *chain lighning\n
-    *slow puddle\n-fancy buttons + tooltips on hover\n * Booooo engine features only.\n-
-    Establish a general control flow\n * Bootstrap\n * Menus\n * Gameplay\n * Win/Lose?\n
-    * Return to menu"
+    armor even work lol?\n-projectile-spawns-projectile behavior\n *chain lighning\n*slow
+    puddle\n-fancy buttons + tooltips on hover\n * Booooo engine features only.\n-
+    Establish a general control flow\n * Bootstrap\n * Menus\n * Gameplay\n * Win/Lose?\n*
+    Return to menu"
 --- !u!222 &1085586392
 CanvasRenderer:
   m_ObjectHideFlags: 0
