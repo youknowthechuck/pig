@@ -112,10 +112,7 @@ public class TowerBuilderMode : PigScript
             GameObject player = GameObject.Find("Player");
             GameObject placedObject = Instantiate(m_towerPrefab, hit.point, Quaternion.identity, player.transform);
 
-            TowerPlacedEvent e = new TowerPlacedEvent();
-            e.Tower = placedObject;
-
-            EventCore.SendTo<TowerPlacedEvent>(this, placedObject, e);
+            SendEvent(new TowerPlacedEvent() { Tower = placedObject }, placedObject);
 
             DisableBuilderMode();
         }
