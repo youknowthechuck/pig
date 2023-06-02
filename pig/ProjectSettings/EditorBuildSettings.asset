@@ -11,4 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Testbeds/Connor/Connor_PolyTest.unity
     guid: 52fd2df98dcd9e94cad98b2aaf34835a
+  - enabled: 1
+    path: Assets/Scenes/Menu/MainMenu.unity
+    guid: ccaf547893dde0346b4a48a5f32d9ff2
+  - enabled: 1
+    path: Assets/Scenes/SampleScene.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}
