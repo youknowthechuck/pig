@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 [RequireComponent(typeof(Health))]
 public class TargetBase : PigScript
 {
-    DamagedBehavior[] m_healthBehaviors = new DamagedBehavior[((int)EHealthPool.HP_Count)];
+    DamageableBehavior[] m_healthBehaviors = new DamageableBehavior[((int)EHealthPool.HP_Count)];
 
     void Start()
     {
@@ -13,8 +13,8 @@ public class TargetBase : PigScript
         m_healthBehaviors[((int)EHealthPool.HP_Armor)] = null;
         m_healthBehaviors[((int)EHealthPool.HP_Base)] = null;
 
-        DamagedBehavior[] damageSections = GetComponents<DamagedBehavior>();
-        foreach (DamagedBehavior damageSection in damageSections)
+        DamageableBehavior[] damageSections = GetComponents<DamageableBehavior>();
+        foreach (DamageableBehavior damageSection in damageSections)
         {
             m_healthBehaviors[((int)damageSection.Type)] = damageSection;
         }
@@ -23,7 +23,7 @@ public class TargetBase : PigScript
     public int GetCurrentHealthTotal()
     {
         int total = 0;
-        foreach (DamagedBehavior damageSection in m_healthBehaviors)
+        foreach (DamageableBehavior damageSection in m_healthBehaviors)
         {
             if (damageSection != null)
             {
@@ -37,7 +37,7 @@ public class TargetBase : PigScript
     [AutoRegisterEvent]
     void HandleDamageEvent(DamageEvent e)
     {
-        foreach (DamagedBehavior damageSection in m_healthBehaviors)
+        foreach (DamageableBehavior damageSection in m_healthBehaviors)
         {
             if (damageSection != null)
             {

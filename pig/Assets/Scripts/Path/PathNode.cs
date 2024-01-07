@@ -19,6 +19,8 @@ public class PathNode
 
     public ENodeInterpolation m_interpFlags;
 
+    public float m_width = 100.0f;
+
     [HideInInspector]
     public float m_length;
     [HideInInspector]

@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using UnityEngine;
 
 public class TowerBuilderMode : PigScript
@@ -12,6 +13,10 @@ public class TowerBuilderMode : PigScript
     private GameObject m_towerPrefab = null;
     private GameObject m_previewInstance = null;
     private bool m_isTowerBuilderEnabled = false;
+
+    [SerializeField]
+    private Material m_ghostMaterial = null;
+
     public GameObject TowerPrefab
     {
         get { return m_towerPrefab; }
@@ -60,6 +65,9 @@ public class TowerBuilderMode : PigScript
         }
 
         m_previewInstance = Instantiate(m_towerPrefab);
+
+        TowerPlacementGhost newGhost = m_previewInstance.AddComponent<TowerPlacementGhost>();
+        newGhost.SetDisplayMaterial(m_ghostMaterial);
     }
 
     public void PositionPreviewAt(Vector3 position, Quaternion rotation)
@@ -72,9 +80,22 @@ public class TowerBuilderMode : PigScript
         m_previewInstance.transform.SetPositionAndRotation(position, rotation);
     }
 
-    public bool ValidateTowerPosition()
+    public bool ValidateTowerPosition(Vector3 pos)
     {
-        return true;
+        bool overlap = false;
+
+        foreach (PathObject path in FindObjectsOfType<PathObject>())
+        {
+            Vector3 nearest = CubicInterpUtils.Closest_Point(pos, path);
+            //@todo: does per node width make sense?
+            float distance = (nearest - pos).magnitude;
+
+            overlap |= distance <= (path.Nodes[0].m_width + m_towerPrefab.GetComponent<CapsuleCollider>().radius);
+        }
+
+        overlap |= (m_previewInstance.GetComponent<TowerPlacementGhost>().OverlapCount > 0);
+
+        return !overlap;
     }
 
     private void Update()
@@ -105,8 +126,12 @@ public class TowerBuilderMode : PigScript
             PositionPreviewAt(hit.point, Quaternion.identity);
         }
 
+        bool valid = ValidateTowerPosition(hit.point);
+
+        m_previewInstance.GetComponent<TowerPlacementGhost>().SetValidity(valid ? 1.0f : 0.0f);
+
         // Wow this is stupid and hacky who would ever hard code a mouse input directly in code???
-        if(Input.GetMouseButtonDown(0) && ValidateTowerPosition())
+        if (Input.GetMouseButtonDown(0) && valid)
         {
             //jank
             GameObject player = GameObject.Find("Player");

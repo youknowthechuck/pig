@@ -12,7 +12,7 @@ public class Player : PigScript
     [SerializeField]
     CanvasRenderer m_TowerSelectionOptions;
 
-    DamagedBehavior m_baseHealth;
+    DamageableBehavior m_baseHealth;
 
     //bleh
     Bank m_bank;
@@ -25,8 +25,8 @@ public class Player : PigScript
         //take the first base health component we find
         //it's not technically an error to have multiple health components on the player, but its kind of useless right now
         //shields one day maybe?
-        DamagedBehavior[] damageSections = GetComponents<DamagedBehavior>();
-        foreach (DamagedBehavior damageSection in damageSections)
+        DamageableBehavior[] damageSections = GetComponents<DamageableBehavior>();
+        foreach (DamageableBehavior damageSection in damageSections)
         {
             if (damageSection.Type == EHealthPool.HP_Base)
             {

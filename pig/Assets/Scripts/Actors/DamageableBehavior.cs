@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DamagedBehavior : PigScript
+[RequireComponent(typeof(StatRepository))]
+public class DamageableBehavior : PigScript
 {
     [SerializeField]
     protected Renderer m_healthBarUI;
@@ -10,7 +11,7 @@ public class DamagedBehavior : PigScript
     protected EHealthPool m_hpType;
 
     [SerializeField]
-    protected int m_baseHealth = 0;
+    protected StatBase m_baseHealthStat;
 
     protected int m_currentHealth;
 
@@ -26,8 +27,15 @@ public class DamagedBehavior : PigScript
 
     public int BaseHealth
     {
-        get { return m_baseHealth; }
+        get 
+        {
+            float statValue = 0.0f;
+            GetComponent<StatRepository>().TryGetStatValue(m_baseHealthStat.Name, out statValue);
+
+            return Mathf.FloorToInt(statValue);
+        }
     }
+
     public int CurrentHealth
     {
         get { return m_currentHealth; }
@@ -47,14 +55,14 @@ public class DamagedBehavior : PigScript
     {
         if (m_healthBarUI != null)
         {
-            m_healthBarUI.material.SetFloat(m_shaderNameHealthPool, m_baseHealth);
+            m_healthBarUI.material.SetFloat(m_shaderNameHealthPool, BaseHealth);
         }
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        m_currentHealth = m_baseHealth;
+        m_currentHealth = BaseHealth;
     }
 
     // Update is called once per frame

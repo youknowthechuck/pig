@@ -45,7 +45,7 @@ public class ProjectileLifetimeTravelToTarget : State
 {
     protected GameObject m_target;
 
-    protected ProjectileBase m_parent;
+    protected ProjectileBase m_projectileObject;
 
     protected TargetBase m_hitTarget = null;
 
@@ -66,7 +66,7 @@ public class ProjectileLifetimeTravelToTarget : State
 
     public void SetParent(ProjectileBase parent)
     {
-        m_parent = parent;
+        m_projectileObject = parent;
     }
 
     void OnTriggerEnter(Collider other)
@@ -78,28 +78,28 @@ public class ProjectileLifetimeTravelToTarget : State
     {
         m_target = input[0] as GameObject;
         Debug.Assert(m_target != null);
-        Debug.Assert(m_parent != null);
+        Debug.Assert(m_projectileObject != null);
 
         PathFollower pathTarget = m_target.GetComponent<PathFollower>();
         if (pathTarget != null)
         {
             //assume that the time to time from shot origin to target doesn't change as the target moves along the path, because predicting that would be really hard
-            Vector3 vectorToTarget = m_target.transform.position - m_parent.transform.position;
+            Vector3 vectorToTarget = m_target.transform.position - m_projectileObject.transform.position;
 
             float distToTarget = vectorToTarget.sqrMagnitude;
 
-            float timeToTarget = distToTarget / (m_parent.Speed * m_parent.Speed);
+            float timeToTarget = distToTarget / (m_projectileObject.Speed * m_projectileObject.Speed);
 
             Vector3 prediction = pathTarget.EvalPosition(pathTarget.LifeTime + timeToTarget);
 
-            m_direction = (prediction - m_parent.transform.position).normalized;
+            m_direction = (prediction - m_projectileObject.transform.position).normalized;
         }
         else
         {
-            m_direction = (m_target.transform.position - m_parent.transform.position).normalized;
+            m_direction = (m_target.transform.position - m_projectileObject.transform.position).normalized;
         }
 
-        m_parent.Show();
+        m_projectileObject.Show();
     }
 
     public override object[] Exit()
@@ -109,14 +109,14 @@ public class ProjectileLifetimeTravelToTarget : State
 
     public override void Tick()
     {
-        Debug.Assert(m_parent != null);
+        Debug.Assert(m_projectileObject != null);
 
-        m_parent.transform.position += m_direction * m_parent.Speed * Time.deltaTime;
+        m_projectileObject.transform.position += m_direction * m_projectileObject.Speed * Time.deltaTime;
 
         //assumes y = 0 is ground plane, kill projectiles that get too far underneath
         const float KILL_THRESHOLD = -5.0f;
 
-        if (m_parent.transform.position.y <= KILL_THRESHOLD)
+        if (m_projectileObject.transform.position.y <= KILL_THRESHOLD)
         {
             m_timedOut = true;
         }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //shields act just like base health, theyre just another hp pool that sits on top of base and soaks damage first
-public class Shield : DamagedBehavior
+public class Shield : DamageableBehavior
 {
     public Shield()
     {

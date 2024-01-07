@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Green
-  m_Shader: {fileID: -6465566751694194690, guid: 190570ebe19f18f4c9393a604f3ec887, type: 3}
+  m_Name: PlacementGhostMat
+  m_Shader: {fileID: -6465566751694194690, guid: a2df95f27293e9a4ca8062db8effebb6, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -103,16 +103,16 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Surface: 0
+    - _Validity: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - Vector3_6df996e613f949eda0f770f722a3811d: {r: 0, g: 1, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []
---- !u!114 &1034053843604533934
+--- !u!114 &8967227627477413195
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

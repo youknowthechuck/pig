@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Health : DamagedBehavior
+public class Health : DamageableBehavior
 {
     public Health()
     {
@@ -14,7 +14,7 @@ public class Health : DamagedBehavior
         if (m_healthBarUI != null)
         {
             m_healthBarUI.material.SetColor(m_shaderNameFillColor, new Color(0.0f, 1.0f, 0.0f));
-            m_healthBarUI.material.SetFloat(m_shaderNameHealthPool, m_baseHealth);
+            m_healthBarUI.material.SetFloat(m_shaderNameHealthPool, BaseHealth);
         }
     }
 

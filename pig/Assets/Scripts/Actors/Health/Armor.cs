@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //armor reduces incoming damage as it is applied, unless the damage type fully damages armor
-public class Armor : DamagedBehavior
+public class Armor : DamageableBehavior
 {
     private void Awake()
     {
@@ -12,7 +12,7 @@ public class Armor : DamagedBehavior
         {
             m_healthBarUI.material.SetColor(m_shaderNameFillColor, new Color(0.5f, 0.5f, 0.5f));
             m_healthBarUI.material.SetFloat(m_shaderNameSegmentLength, 1.0f);
-            m_healthBarUI.material.SetFloat(m_shaderNameHealthPool, m_baseHealth);
+            m_healthBarUI.material.SetFloat(m_shaderNameHealthPool, BaseHealth);
         }
 
     }
@@ -21,7 +21,7 @@ public class Armor : DamagedBehavior
     void Start()
     {
         //double the armor base health pool, effectively halving incoming damage
-        m_currentHealth = 2 * m_baseHealth;
+        m_currentHealth = 2 * BaseHealth;
     }
 
     public Armor()

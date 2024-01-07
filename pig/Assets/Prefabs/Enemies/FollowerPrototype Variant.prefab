@@ -11,6 +11,14 @@ PrefabInstance:
       propertyPath: m_healthBarUI
       value: 
       objectReference: {fileID: 9138753633199803101}
+    - target: {fileID: -3635242615629153540, guid: 377d1c1b5dc9e9d4c8c07c52696a5d86, type: 3}
+      propertyPath: m_baseHealthStat.Name
+      value: BaseHealth
+      objectReference: {fileID: 0}
+    - target: {fileID: -3635242615629153540, guid: 377d1c1b5dc9e9d4c8c07c52696a5d86, type: 3}
+      propertyPath: m_baseHealthStat.BaseValue
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: -2113475623351290460, guid: 377d1c1b5dc9e9d4c8c07c52696a5d86, type: 3}
       propertyPath: m_damage
       value: 3
@@ -191,7 +199,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_healthBarUI: {fileID: 4784826263608690773}
-  m_baseHealth: 1
+  m_baseHealthStat:
+    Name: ArmorHealth
+    BaseValue: 1
 --- !u!23 &4784826263608690773 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 8894198810606521822, guid: 377d1c1b5dc9e9d4c8c07c52696a5d86, type: 3}

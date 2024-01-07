@@ -15,6 +15,8 @@ public class StatRepository : PigScript
 
     public Dictionary<string, float> FinalStats = new Dictionary<string, float>();
 
+    private bool m_built = false;
+
     public void Awake()
     {
         FullRebuild();
@@ -31,6 +33,8 @@ public class StatRepository : PigScript
         CompileBaseStats();
         CompileStatMods();
         CalculateFinalStats();
+
+        m_built = true;
     }
 
     void CompileBaseStats()
@@ -120,5 +124,14 @@ public class StatRepository : PigScript
 
             FinalStats.Add(baseStat.Key, statValue);
         }
+    }
+
+    public bool TryGetStatValue(string name, out float value)
+    {
+        if (!m_built)
+        {
+            FullRebuild();
+        }
+        return FinalStats.TryGetValue(name, out value);
     }
 }
