@@ -55,6 +55,8 @@ public class Round : PigScript
 
     public void Begin()
     {
+        m_timer = 0.0f;
+
         m_pendingSpawns.Clear();
 
         foreach (SpawnParams spawnParams in m_spawns)

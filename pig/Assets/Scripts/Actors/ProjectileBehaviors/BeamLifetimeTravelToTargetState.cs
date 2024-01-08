@@ -26,9 +26,9 @@ public class BeamLifetimeTravelToTargetState : ProjectileLifetimeTravelToTarget
         Vector3 localUp = Vector3.Cross(dir, left);
 
         float scaleZ = (m_target.transform.position - m_projectileObject.transform.position).magnitude;
-        Vector3 localScale = defaultLocalScale;// m_projectileObject.transform.localScale;
+        Vector3 localScale = m_projectileObject.transform.localScale;
         //the default plane is 10x10 so scale the beam to be the exact length to the target
-        localScale.z = scaleZ / (10.0f * defaultLossyScaleZ/*m_projectileObject.transform.lossyScale.z*/);
+        localScale.z = scaleZ / (10.0f * m_projectileObject.transform.parent.lossyScale.z);
 
         Vector3 mid = m_projectileObject.transform.position + dir * (scaleZ / 2.0f);
 

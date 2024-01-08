@@ -7,6 +7,10 @@ public class Director : PigScript
     [SerializeField]
     private List<Round> m_rounds = null;
 
+
+    [SerializeField]
+    bool m_shouldLoop = false;
+
     private int m_currentRound = -1;
 
     public int CurrentRound
@@ -30,6 +34,11 @@ public class Director : PigScript
         if (IsCurrentRoundComplete() || ignoreCurrentRoundComplete)
         {
             ++m_currentRound;
+
+            if (m_shouldLoop)
+            {
+                m_currentRound = m_currentRound % m_rounds.Count;
+            }
 
             if (m_currentRound >= 0 && m_currentRound < m_rounds.Count)
             {

@@ -4,17 +4,15 @@ using UnityEngine;
 
 public class ChainLifetimeHitTargetState : ProjectileLifetimeHitTarget
 {
-    [SerializeField]
-    private float m_lifeSpan = 0.5f;
 
     [SerializeField]
-    private float m_chainRadius = 60.0f;
-
-    private float m_lifetime = 0.0f;
+    private float m_chainRadius = 150.0f;
 
     private GameObject m_chainTarget = null;
 
     private Vector3 m_endPoint = Vector3.zero;
+
+    public int ChainCount = 3;
 
 
     void FindChainTarget()
@@ -64,40 +62,21 @@ public class ChainLifetimeHitTargetState : ProjectileLifetimeHitTarget
         }
     }
 
-    public override bool HitStillAlive()
+    void SpawnChainProjectile()
     {
-        bool hasHealth = m_health != null ? m_health.Alive : false;
-        bool hasTarget = m_chainTarget != null;
+        GameObject chain = GameObject.Instantiate(gameObject, m_target.transform.position, m_target.transform.rotation, transform.parent);
 
-        bool goNext = (m_lifetime >= m_lifeSpan) && hasHealth && hasTarget;
-
-        //big jank. update the base projectile position to draw the next chain from the oringinal target location
-        if (goNext)
-        {
-            m_damager.GetComponent<ProjectileBase>().Hide();
-            m_damager.gameObject.transform.position = m_endPoint;
-        }
-
-        return goNext;
-    }
-
-    public override bool HitDead()
-    {
-        return (m_lifetime >= m_lifeSpan) && !HitStillAlive();
+        chain.GetComponent<ProjectileLifetimeStateMachine>().SetTarget(m_chainTarget);
     }
 
     public override void Enter(object[] input)
     {
-        m_lifetime = 0.0f;
         m_chainTarget = null;
 
         m_target = input[0] as TargetBase;
         Debug.Assert(m_target != null);
 
         m_damager?.TryDoDamage(m_target.gameObject);
-
-        m_endPoint = m_target.transform.position;
-        m_endPoint.y += 20.0f; //jank
 
         //mark target as shocked if it isn't alraedy, to deprioritize it as a chain target
         LightningStruck shock = m_target.gameObject.GetComponent<LightningStruck>();
@@ -119,6 +98,14 @@ public class ChainLifetimeHitTargetState : ProjectileLifetimeHitTarget
             selfDamage.damageOwner = m_health.gameObject;
 
             m_health.TakeDamage(selfDamage);
+
+            --ChainCount;
+        }
+
+        //jank
+        if (ChainCount > 0 && m_chainTarget != null)
+        {
+            SpawnChainProjectile();
         }
     }
 
@@ -130,6 +117,5 @@ public class ChainLifetimeHitTargetState : ProjectileLifetimeHitTarget
 
     public override void Tick()
     {
-        m_lifetime += Time.deltaTime;
     }
 }

@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 327210149481235796}
   - component: {fileID: 6561836607578281577}
   - component: {fileID: 119214164502941292}
+  - component: {fileID: 5880523189606014995}
   m_Layer: 6
   m_Name: ChainLightning_Projectile
   m_TagString: Untagged
@@ -70,7 +71,7 @@ MonoBehaviour:
   m_healthBarUI: {fileID: 0}
   m_baseHealthStat:
     Name: BaseHealth
-    BaseValue: 3
+    BaseValue: 1
 --- !u!33 &8930949499279453616
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -179,7 +180,7 @@ MonoBehaviour:
   m_travelState: {fileID: 7461131147859757801}
   m_hitState: {fileID: 119214164502941292}
   m_timeoutState: {fileID: 0}
-  m_terminateState: {fileID: 0}
+  m_terminateState: {fileID: 5880523189606014995}
 --- !u!65 &327210149481235796
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -217,5 +218,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb85fabb77a3e4645a147903d98b6373, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_chainRadius: 160
+  ChainCount: 3
+--- !u!114 &5880523189606014995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5976465638125018908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39de468c9b79cf34884289011dfbe848, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_lifeSpan: 0.2
-  m_chainRadius: 500
