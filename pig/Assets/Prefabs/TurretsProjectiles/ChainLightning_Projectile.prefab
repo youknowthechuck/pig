@@ -16,10 +16,10 @@ GameObject:
   - component: {fileID: 8219984446573779020}
   - component: {fileID: -1732935001916028448}
   - component: {fileID: 7461131147859757801}
-  - component: {fileID: 911232394977829375}
   - component: {fileID: -85252407565643757}
   - component: {fileID: 327210149481235796}
   - component: {fileID: 6561836607578281577}
+  - component: {fileID: 119214164502941292}
   m_Layer: 6
   m_Name: ChainLightning_Projectile
   m_TagString: Untagged
@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 867718819002bd24e9e10cf251fff2eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damage: 3
+  m_damage: 2
   m_damageType: 1
 --- !u!114 &7461131147859757801
 MonoBehaviour:
@@ -163,19 +163,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4a14eda129362c4fbedd3d523cbdcba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &911232394977829375
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5976465638125018908}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39de468c9b79cf34884289011dfbe848, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_lifeSpan: 0.2
 --- !u!114 &-85252407565643757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,9 +177,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_waitState: {fileID: 0}
   m_travelState: {fileID: 7461131147859757801}
-  m_hitState: {fileID: 0}
+  m_hitState: {fileID: 119214164502941292}
   m_timeoutState: {fileID: 0}
-  m_terminateState: {fileID: 911232394977829375}
+  m_terminateState: {fileID: 0}
 --- !u!65 &327210149481235796
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -218,3 +205,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa163d4d1c178744197c504c093b695e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &119214164502941292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5976465638125018908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb85fabb77a3e4645a147903d98b6373, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_lifeSpan: 0.2
+  m_chainRadius: 500

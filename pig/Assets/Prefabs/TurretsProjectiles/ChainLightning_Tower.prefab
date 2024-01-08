@@ -528,7 +528,6 @@ MonoBehaviour:
   m_baseAttackTime: 1.6
   m_projectilePrefab: {fileID: 7358504033755559502, guid: 334969ff46da78f4594422b7e697ae75, type: 3}
   m_range: 240
-  hackIsOverlapping: 0
   m_projectileOrigin: {fileID: 4409398738838776945}
 --- !u!114 &-1966253473251226753
 MonoBehaviour:
@@ -619,7 +618,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dea627a7edd11b4cbfafc227bcca217, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_amount: 12
+  m_amount: 1
 --- !u!136 &4006942949430375256
 CapsuleCollider:
   m_ObjectHideFlags: 0

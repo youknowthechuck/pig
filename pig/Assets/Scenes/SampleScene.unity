@@ -1134,7 +1134,7 @@ Transform:
   - {fileID: 1266471429}
   - {fileID: 821772727}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &507040518
 GameObject:
@@ -1167,7 +1167,7 @@ Transform:
   m_Children:
   - {fileID: 175780685}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &507040521
 MonoBehaviour:
@@ -1614,7 +1614,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bigBoy: {fileID: 703481506}
-  towerPrefab: {fileID: 4206190211855957980, guid: 3626ae0063b2d1e4188e3aee6a74589f, type: 3}
+  towerPrefab: {fileID: 4206190211855957980, guid: f90069b398021854fb70b34018901477, type: 3}
   hotkey: 49
   activeColor: {r: 1, g: 1, b: 1, a: 1}
   disabledColor: {r: 1, g: 0, b: 0, a: 1}
@@ -2995,11 +2995,10 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "TODO:\n-debug console + commands\n  *history navigation\n-action input
-    system? input polling is shit\n-new tower + projectile (ground ball?)\n-does
-    armor even work lol?\n-projectile-spawns-projectile behavior\n *chain lighning\n*slow
-    puddle\n-fancy buttons + tooltips on hover\n * Booooo engine features only.\n-
-    Establish a general control flow\n * Bootstrap\n * Menus\n * Gameplay\n * Win/Lose?\n*
-    Return to menu"
+    system? input polling is shit\n-new tower + projectile (ground ball?)\n-projectile-spawns-projectile
+    behavior\n *chain lighning\n*slow puddle\n-fancy buttons + tooltips on hover\n*
+    Booooo engine features only.\n- Establish a general control flow\n * Bootstrap\n*
+    Menus\n * Gameplay\n * Win/Lose?\n* Return to menu"
 --- !u!222 &1085586392
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4780,7 +4779,7 @@ MonoBehaviour:
     Waves:
     - m_travelerPrefab: {fileID: 2172648707129821635, guid: 377d1c1b5dc9e9d4c8c07c52696a5d86, type: 3}
       m_initialSpawnDelay: 0
-      m_spawnInterval: 1.5
+      m_spawnInterval: 1
       m_spawnCount: 10
 --- !u!4 &1926318285
 Transform:
@@ -4844,6 +4843,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6196500605488197337, guid: d9cac878408bdb94394b28e2278c2dd3, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6868643252606566873, guid: d9cac878408bdb94394b28e2278c2dd3, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -4862,7 +4865,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6975576407638878801, guid: d9cac878408bdb94394b28e2278c2dd3, type: 3}
       propertyPath: m_RootOrder
-      value: 10
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6975576407638878801, guid: d9cac878408bdb94394b28e2278c2dd3, type: 3}
       propertyPath: m_LocalPosition.x
